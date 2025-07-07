@@ -1,4 +1,5 @@
 import {Document, Image, Page, StyleSheet, Text, View,} from '@react-pdf/renderer';
+import logo from "@/images/logo.png"
 
 const styles = StyleSheet.create({
     page: {
@@ -67,8 +68,8 @@ const styles = StyleSheet.create({
     seatBox: {
         padding: 6,
         borderRadius: 6,
-        backgroundColor: '#e0f2fe', // light blue bg
-        color: '#0284c7',           // blue text
+        backgroundColor: '#e0f2fe',
+        color: '#0284c7',
         marginRight: 6,
         marginBottom: 2,
         fontSize: 15
@@ -93,6 +94,14 @@ const styles = StyleSheet.create({
         width: 140,
         height: 140,
     },
+    passenger:{
+        padding: 5,
+        borderRadius: 5,
+        backgroundColor: '#fef5e0',
+        color: '#000000',
+        marginBottom: 5,
+        fontSize: 13,
+    }
 });
 
 // const ticketData = {
@@ -117,6 +126,8 @@ type TrainTicket = {
     id: string;
     from : any,
     to: any,
+    passengers: any,
+    amount: number;
 };
 
 type Props = {
@@ -137,6 +148,7 @@ function formatDate(dateStr: string){
 const TrainPDF = ({ ticket, qrCodeBase64, bookedSeats }: Props) => (
     <Document>
         <Page size={[595, 620]} style={styles.page}>
+            <Image src={logo.src}/>
             {/* Header */}
             <View style={styles.header}>
                 <View style={styles.movieDetails}>
@@ -154,10 +166,12 @@ const TrainPDF = ({ ticket, qrCodeBase64, bookedSeats }: Props) => (
                 <View>
                     <View style={styles.infoRow}>
                         <Text style={styles.label}>Travel Info</Text>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between'}}>
-                            <Text style={styles.infoDetails}>{ticket.from.location}</Text>
-                            <Text style={styles.infoDetails}>{ticket.to.location}</Text>
-                        </View>
+                        <Text style={styles.infoDetails}>From : {ticket.from.location}</Text>
+                        <Text style={[{marginLeft:20, marginBottom: 2, color: '#374151',}]}>{ticket.from.time}</Text>
+                        <Text style={[{marginLeft:20, marginBottom:12, color: '#374151',}]}>{formatDate(ticket.from.date)}</Text>
+                        <Text style={styles.infoDetails}>To : {ticket.to.location}</Text>
+                        <Text style={[{marginLeft:20, marginBottom: 2, color: '#374151',}]}>{ticket.to.time}</Text>
+                        <Text style={[{marginLeft:20, color: '#374151',}]}>{formatDate(ticket.to.date)}</Text>
                     </View>
 
                     <Text style={[styles.label, { marginTop: 8 }]}>Seats Info:</Text>
@@ -165,6 +179,20 @@ const TrainPDF = ({ ticket, qrCodeBase64, bookedSeats }: Props) => (
                         {bookedSeats.map((seat, i) => (
                             <View key={i} style={styles.seatBox}>
                                 <Text>{seat}</Text>
+                            </View>
+                        ))}
+                    </View>
+                    <View>
+                        <Text style={[{color:'#374151'}]}>Amount : {ticket.amount}</Text>
+                    </View>
+
+                    <Text style={[styles.label, { marginTop: 16 }]}>Passenger Details:</Text>
+                    <View style={[{flexDirection:"column", marginVertical:8}]}>
+                        {ticket.passengers.map((passenger:any, i:number) => (
+                            <View key={i} style={styles.passenger}>
+                                <Text style={[{ marginBottom:2}]}>Name: {passenger.name}</Text>
+                                <Text style={[{ marginBottom:2}]}>Age: {passenger.age}</Text>
+                                <Text style={[{ marginBottom:1}]}>Gender: {passenger.gender}</Text>
                             </View>
                         ))}
                     </View>

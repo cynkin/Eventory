@@ -8,6 +8,7 @@ import {FormProvider, useFieldArray, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {z} from "zod";
 import {useSession} from "next-auth/react";
+import Spinner from "@/myComponents/UI/Spinner";
 
 const formSchema = z.object({
     passengers: z.array(
@@ -134,6 +135,8 @@ export default function TrainBookingPage() {
     const [action, setAction] = useState<string>("from");
     const [passengers, setPassengers] = useState<any[]>([]);
     const [balance, setBalance] = useState<number>(0);
+    const [loading, setLoading] = useState<boolean>(false);
+
     const {data: session, status} = useSession();
     const router = useRouter();
 
@@ -163,6 +166,9 @@ export default function TrainBookingPage() {
 
     const handleSubmit = async () => {
         if(!session || !session.user || !session.user.id) return;
+
+        setLoading(true);
+
         const fromStation = train.stations.find(station => station.location === from);
         const toStation = train.stations.find(station => station.location === to);
         const amount = passengers.length*cost;
@@ -170,6 +176,7 @@ export default function TrainBookingPage() {
 
         if(balance < amount) {
             alert("Insufficient Balance!");
+            setLoading(false);
             return;
         }
 
@@ -206,6 +213,8 @@ export default function TrainBookingPage() {
         } catch (e) {
             console.error("Error sending ticket:", e);
         }
+
+        setLoading(false);
         router.push("/account/history")
     }
 
@@ -255,6 +264,12 @@ export default function TrainBookingPage() {
 
     return(
         <>
+            {loading ?
+                <div className="xl:px-44 flex justify-center items-center h-screen">
+                    <Spinner/>
+                </div>
+                :
+                <>
             {train &&
                 <div className="xl:px-44 p-2 flex space-x-20 justify-center flex-row">
                     <div className=" flex items-center flex-col">
@@ -356,6 +371,9 @@ export default function TrainBookingPage() {
                         }
                     </div>
                 </div>
+
+            }
+                </>
             }
         </>
     )
