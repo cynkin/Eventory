@@ -1,14 +1,16 @@
+'use server'
 import { NextResponse } from 'next/server';
 import { renderToBuffer } from '@react-pdf/renderer';
 import TicketPDF from '@/myComponents/Event/TicketPDF';
 import ConcertPDF from '@/myComponents/Event/ConcertPDF';
 import QRCode from 'qrcode';
 import React from 'react';
+import TrainPDF from "@/myComponents/Event/TrainPDF";
 
 export async function POST(req: Request) {
     const body = await req.json();
 
-    const event = body.movie ? "movie" : "concert";
+    const event = body.booking_id ? "movie" : body.concert? "concert" : "train";
 
     const id = event === "movie" ? body.booking_id : body.id;
     let qr;
@@ -31,11 +33,16 @@ export async function POST(req: Request) {
             <ConcertPDF ticket={body} qrCodeBase64={qr}/>
         );
     }
+    if(event === "train") {
+        pdfBuffer = await renderToBuffer(
+            <TrainPDF ticket={body} qrCodeBase64={qr} bookedSeats={body.bookedSeats}/>
+        )
+    }
 
     return new NextResponse(pdfBuffer, {
         headers: {
             'Content-Type': 'application/pdf',
-            'Content-Disposition': 'attachment; filename="ticket.pdf"',
+            'Content-Disposition': 'attachment; filename="download-ticket.pdf"',
         },
     });
 }

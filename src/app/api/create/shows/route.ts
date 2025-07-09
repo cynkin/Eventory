@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/lib/db";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/lib/auth";
 import {useEventStore} from "@/stores/eventStore";
 // import {checkMovieConflict} from "@/lib/conflict";
-
-const prisma = new PrismaClient();
 
 // export function normalizeString(input: string) {
 //     return input.toLowerCase().replace(/\s+/g, "").trim();

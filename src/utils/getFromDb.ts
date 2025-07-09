@@ -1,24 +1,19 @@
 'use server'
-import {PrismaClient} from '@prisma/client';
-
-const prisma = new PrismaClient();
+import prisma from "@/lib/db";
 
 export async function getBalance(userId:string){
     return prisma.users.findUnique({where:{id:userId}, select:{balance:true}});
 }
 
 export async function getMovies() {
-    console.log(prisma.movies.findMany());
     return prisma.movies.findMany();
 }
 
 export async function getConcerts() {
-    console.log(prisma.concerts.findMany());
     return prisma.concerts.findMany();
 }
 
 export async function getTrains() {
-    console.log(prisma.trains.findMany());
     return prisma.trains.findMany();
 }
 

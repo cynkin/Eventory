@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
         await sendConcertTicket(ticketData, email, ticket.id);
         return NextResponse.json({ success: true, id: ticket.id });
     } catch (err) {
-        console.error("Error sending ticket:", err);
-        return NextResponse.json({ error: "Failed to send ticket" }, { status: 500 });
+        console.error("Error sending download-ticket:", err);
+        return NextResponse.json({ error: "Failed to send download-ticket" }, { status: 500 });
     }
 }

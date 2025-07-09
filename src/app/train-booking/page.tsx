@@ -211,7 +211,7 @@ export default function TrainBookingPage() {
                 console.log("Ticket sent successfully");
             }
         } catch (e) {
-            console.error("Error sending ticket:", e);
+            console.error("Error sending download-ticket:", e);
         }
 
         setLoading(false);

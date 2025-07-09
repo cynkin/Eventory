@@ -5,6 +5,9 @@ import {useEffect, useState} from "react";
 import {getConcerts, getMovies} from "@/utils/getFromDb";
 import Fuse from "fuse.js";
 import ConcertCard from "@/myComponents/Event/ConcertCard";
+import {useTrainStore} from "@/stores/trainStore";
+import {Station} from "../../../types/eventStore";
+import TrainCard from "@/myComponents/Event/TrainCard";
 
 type Movie = {
     id: string;
@@ -31,6 +34,13 @@ type Concert = {
     // createdAt: Date;
 };
 
+type Train = {
+    title: string,
+    id: string,
+    train_id : number;
+    stations : Station[];
+}
+
 const validEvents = ['movies', 'concerts', 'trains'];
 
 export default function Page() {
@@ -39,12 +49,18 @@ export default function Page() {
 
     const [filteredMovies, setFilteredMovies] = useState<Movie[]>([]);
     const [filteredConcerts, setFilteredConcerts] = useState<Concert[]>([]);
+    const [filteredTrains, setFilteredTrains] = useState<Train[]>([]);
+    const [output, setOutput] = useState<boolean>(false);
+
+    const trains = useTrainStore(state => state.trains);
+    const {refreshTrains} = useTrainStore();
 
     useEffect(() => {
         const fetchMovies = async () => {
             const data = await getMovies();
 
             if(q.trim() === "") {
+                setOutput((prev) => prev || false)
                 setFilteredMovies(data);
                 return;
             }
@@ -57,7 +73,7 @@ export default function Page() {
             const results = fuse.search(q);
             setFilteredMovies(results.map(res => res.item));
 
-            console.log(data, results, q);
+            // console.log(data, results, q);
         };
 
         const fetchConcerts = async () => {
@@ -65,6 +81,7 @@ export default function Page() {
 
             if(q.trim() === "") {
                 setFilteredConcerts(data);
+                setOutput((prev) => prev || false)
                 return;
             }
 
@@ -76,12 +93,30 @@ export default function Page() {
             const results = fuse.search(q);
             setFilteredConcerts(results.map(res => res.item));
 
-            console.log(data, results, q);
+            // console.log(data, results, q);
         };
+        
+        const fetchTrains = async() =>{
+            refreshTrains();
+            // console.log(trains);
+            if(q.trim() === "") {
+                setOutput((prev) => prev || false)
+                return;
+            }
 
+            const fuse = new Fuse(trains, {
+                keys: ['title'],
+                threshold: 0.4, // fuzzy match sensitivity
+            });
+
+            const results = fuse.search(q);
+            setFilteredTrains(results.map(res => res.item));
+        }
+
+        fetchTrains();
         fetchConcerts();
         fetchMovies();
-    }, [q]);
+    }, [q, refreshTrains, trains.length]);
 
     // const movie = movies.filter(m => m.title.toLowerCase() === q?.toLowerCase())
     // if(!validEvents.includes(event)) notFound();
@@ -96,6 +131,9 @@ export default function Page() {
                 ))}
                 {filteredConcerts.map((concert, index) => (
                     <ConcertCard key={index} id={concert.id} title={concert.title} image={concert.image} ageRating={concert.ageRating} languages={concert.languages} cost={concert.cost} end_date={concert.end_date} start_date={concert.start_date} genres={concert.genres} duration={concert.duration}/>
+                ))}
+                {filteredTrains.map((train, index) => (
+                    <TrainCard key={index} trainId={train.train_id} id={train.id} title={train.title} stations={train.stations}/>
                 ))}
             </div>
         </div>

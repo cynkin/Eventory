@@ -38,7 +38,7 @@ export default function Page() {
     const SLOT = useEventStore.getState().slot;
     const slotId = SLOT?.showId
     const theatreId = SLOT?.theatreId;
-
+    const COSTS = [SLOT?.cost, SLOT?.premiumCost];
 
     const { data: session, status, update } = useSession();
     const user = session?.user;
@@ -50,6 +50,11 @@ export default function Page() {
     const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
     const [movie, setMovie] = useState<Movie>();
     const [theatre, setTheatre] = useState<Theatre>();
+    const [amount, setAmount] = useState<number>(0);
+    const [type, setType] = useState<any>({
+        vip: 0,
+        regular: 0,
+    });
 
     const searchParams = useSearchParams();
     const movieId = searchParams.get('movieId');
@@ -95,6 +100,11 @@ export default function Page() {
             updateSeatStatus(code, "available");
         });
 
+        socket.on("seat:deleted", ({userId: incomingId}) => {
+            if(incomingId !== userId) return;
+            router.push("/booking?movieId=" + movieId)
+        })
+
         socket.on("seat:booked", ({ code, slotId: incomingId }) => {
             if(slotId !== incomingId) return;
 
@@ -130,7 +140,7 @@ export default function Page() {
                     console.log("Ticket sent successfully");
                 }
             } catch (e) {
-                console.error("Error sending ticket:", e);
+                console.error("Error sending download-ticket:", e);
             }
 
             const newBalance = balance! - ticketData.amount;
@@ -159,7 +169,7 @@ export default function Page() {
     }, [status, userId, slotId, router]);
 
     async function handleSubmit() {
-        if(!user || !SLOT || !user.balance || !SLOT.cost) return;
+        if(!user || !SLOT || !user.balance) return;
 
         console.log("Submitting payment");
 
@@ -191,21 +201,36 @@ export default function Page() {
     }
 
     function select(row: number, col: number) {
+        if(!SLOT) return;
 
         const currentSeat = seatLayout?.[row]?.[col];
         if (!currentSeat || currentSeat.status === "booked" || currentSeat.status === "held") return;
 
-        const {code, status} = currentSeat;
+        const {code, status, type} = currentSeat;
 
         const isSelecting = status === "available";
         const isDeselecting = status === "select";
 
-
         if (isSelecting) {
+            if(selectedSeats.length > 9) {
+                alert("You can only select 10 seats at a time");
+                return;
+            }
+
+            if(type === "vip"){
+                setAmount(prev => prev + COSTS[1]!);
+                setType(prev => ({...prev, vip: prev.vip + 1}));
+            }
+            else{
+                setAmount(prev => prev + COSTS[0]!);
+                setType(prev => ({...prev, regular: prev.regular + 1}));
+            }
             setSelectedSeats(prev => [...prev, code]);
             socket.emit("seat:select", {code, slotId});
         }
         else if (isDeselecting) {
+            if(type === "vip") setAmount(prev => prev - COSTS[1]!);
+            else setAmount(prev => prev - COSTS[0]!);
             setSelectedSeats(prev => prev.filter(c => c !== code));
             socket.emit("seat:unselect", {code, slotId});
         }
@@ -288,7 +313,6 @@ export default function Page() {
 
     if (!seatLayout.length || !seatLayout[0]?.length) return <Spinner />;
     const cols = seatLayout[0].length || 0;
-    const amount = selectedSeats.length * SLOT?.cost;
 
 
     return(
@@ -383,29 +407,38 @@ export default function Page() {
                     <div>
                         <div className="mt-4">Seat Info</div>
                         <div className="flex space-x-3">
+                            {selectedSeats.length === 0 &&
+                                <div className="h-8"></div>}
                             {selectedSeats.map((code, index) => (
                                 <div key={index} className=" font-medium p-1 text-white rounded-xl bg-yellow-500">{code}</div>
                             ))}
                         </div>
                         <div className="mt-3">Ticket Info</div>
                         <div className="flex px-2 justify-between font-bold">
-                            <div>{selectedSeats.length} X {SLOT?.cost} </div>
-                            <div>&#8377; {selectedSeats.length * SLOT?.cost}</div>
+                            <div>{type["regular"]} X {COSTS[0]} </div>
+                            <div>&#8377; {type["regular"] * COSTS[0]!}</div>
+                        </div>
+                        <div className="flex px-2 justify-between font-bold">
+                            <div>{type["vip"]} X {COSTS[1]} </div>
+                            <div>&#8377; {type["vip"] * COSTS[1]!}</div>
                         </div>
 
                         <div className="mt-3">Payment Total</div>
                         <div className="flex px-2 justify-between font-bold">
                             <div>Sub Total</div>
-                            <div>&#8377; {selectedSeats.length * SLOT?.cost}</div>
+                            <div>&#8377; {amount}</div>
                         </div>
                     </div>
 
-                    <div className="mt-5 flex justify-center w-full rounded-xl">
-                        {selectedSeats.length > 0 &&
-                            <button onClick={handleSubmit} className=" px-4 py-2 cursor-pointer rounded-full bg-[#1568e3] text-white hover:bg-[#0d4eaf]">
-                                Proceed to Payment
-                            </button>
-                        }
+                    <div className="mt-5 flex justify-center rounded-xl">
+                        {selectedSeats.length > 0
+                            ?
+                                <button onClick={handleSubmit} className=" px-4 py-2 cursor-pointer rounded-full bg-[#1568e3] text-white hover:bg-[#0d4eaf]">
+                                    Proceed to Payment
+                                </button>
+                            :
+                            <div className="h-10"></div>
+                            }
                     </div>
                 </div>
             </div>

@@ -27,7 +27,7 @@ export async function sendTicket(ticketData: any, userEmail: string) {
         from: `"Eventory, Inc" <${process.env.EMAIL_USER}>`,
         to: userEmail,
         subject: `Ticket for ${ticketData.movie.title} on ${formatDate(ticketData.date)}`,
-        text: "Your ticket is attached as a PDF.",
+        text: "Thank you for choosing us to entertain you! For verification and check-in, please download the ticket attached below!",
         attachments: [
             {
                 filename: `ticket_${ticketData.booking_id}.pdf`,

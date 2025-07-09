@@ -5,10 +5,12 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/db"; // Your configured PrismaClient instance
 
 export async function POST(req: Request) {
+    console.log("------ Incoming request - Payment   api/payment/route.ts");
     const session = await getServerSession(authOptions);
     if (!session || !session.user?.id) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
 
     const { movieId, theatreId, userId, amount} = await req.json();
 

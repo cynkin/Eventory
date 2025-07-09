@@ -48,7 +48,7 @@ export default function LoginPage() {
 
         setEmail(email);
         if(result.exists) router.push("/login/check-password");
-        else router.push("/login/create-password");
+        else router.push("/login/email/verification?email="+email+"&register=true");
     }
 
     return (

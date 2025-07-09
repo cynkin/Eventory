@@ -13,7 +13,7 @@ const io = new Server(4000, {
 const heldSeatsBySlot = new Map();
 const seatsHeldBySocket = new Map();
 
-const HOLD_DURATION = 30 * 1000;
+const HOLD_DURATION = 60 * 1000;
 
 function findSeatIndex(layout, code) {
     for (let i = 0; i < layout.length; i++) {
@@ -56,7 +56,7 @@ io.on("connection", async (socket) => {
 
         const timeout = setTimeout(() => {
             slotMap.delete(code);
-            io.to(slotId).emit("seat:unlocked", {code, slotId});
+            io.to(slotId).emit("seat:deleted", {userId});
         }, HOLD_DURATION);
 
         slotMap.set(code, {userId, timeout});
@@ -160,7 +160,7 @@ io.on("connection", async (socket) => {
         }
 
         if (errors.length > 0) {
-            ///send_mail({amount, seats, time:show.time, date:show.date, language:show.language, booking_id:ticket.id, });
+            ///send_mail({amount, seats, time:show.time, date:show.date, language:show.language, booking_id:download-ticket.id, });
             socket.emit("seat:confirm:error", { errors });
         } else {
             const theatre = await prisma.theatres.findUnique({where:{id:show.theatre_id}});
@@ -193,7 +193,7 @@ io.on("connection", async (socket) => {
                         socket.emit("seat:confirm:success", { success: true, ticketData });
                     } catch (e) {
                         console.error("Email error:", e);
-                        socket.emit("seat:confirm:error", { errors: ["Failed to send ticket email"] });
+                        socket.emit("seat:confirm:error", { errors: ["Failed to send download-ticket email"] });
                     }
                 }
             }

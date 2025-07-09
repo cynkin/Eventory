@@ -22,6 +22,7 @@ export default function Profile() {
     const eventRef = useRef<HTMLDivElement>(null);
     const profileRef = useRef<HTMLDivElement>(null);
     const [balance, setBalance] = useState(session?.user?.balance || 0);
+    const [pic, setPic] = useState("");
 
     // Close dropdowns when clicking outside
     useEffect(() => {
@@ -49,7 +50,27 @@ export default function Profile() {
             //     }
             // })
         }
-        if(session) getBalance();
+
+        async function getPic (){
+            const res = await fetch(`/api/get/contact-details`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({userId: session?.user?.id})
+                })
+
+            if(!res.ok) throw new Error("Something went wrong");
+            const data = await res.json();
+
+            if(!data || !data.profile_pic) return;
+            setPic(data.profile_pic);
+        }
+        if(session) {
+            getBalance();
+            getPic();
+        }
 
     }, [session]);
 
@@ -92,12 +113,31 @@ export default function Profile() {
                             className={`${style} focus:outline-none`}
                             onClick={() => setShowProfileDropdown(!showProfileDropdown)}
                         >
-                            <CircleUserRound className="mr-2" />
+
+                            {pic !== ""
+                                ?
+                                <div className="rounded-full border-2 w-12 h-12 mr-2 relative overflow-hidden">
+                                    <img alt="" className="scale-100 overflow-hidden transition-all ease-in-out duration-300"  style={{ objectFit:"cover", objectPosition: "center"}}
+                                         src={pic}  />
+                                </div>
+                                :
+                                <CircleUserRound className="mr-2" />
+                            }
                             {capitalize(session.user.name || "")}
                         </button>
 
                         {showProfileDropdown && (
-                            <div className="absolute right-0 mt-2 w-90 bg-white border rounded-lg shadow-lg z-10 pt-8 pb-3">
+                            <div className="absolute right-0 w-90 bg-white border rounded-lg shadow-lg z-10 pb-3">
+                                {pic !== "" ?
+                                    <div className="flex justify-center m-2">
+                                        <div className="rounded-full border-2 w-30 h-30 my-2 relative overflow-hidden">
+                                                <img alt="" className="scale-100 overflow-hidden transition-all ease-in-out duration-300"  style={{ objectFit:"cover", objectPosition: "center"}}
+                                                     src={pic}  />
+                                        </div>
+                                    </div>
+                                    :
+                                    <div className="flex justify-center mt-11"/>
+                                }
                                 <div className="text-xl text-center font-semibold">
                                     Hi, {capitalize(session.user.name || "")}
                                 </div>

@@ -1,7 +1,7 @@
 'use client';
 import Image from "next/image"
 import logo from "@/images/logo.png"
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import {useAuthForm} from "@/app/context/AuthFormContext";
 import {useRouter, useSearchParams} from "next/navigation";
 import {signIn} from "next-auth/react";
@@ -17,6 +17,13 @@ export default function LoginPage() {
     const [error, setError] = useState("");
     const searchParams = useSearchParams();
     const method = searchParams.get("method");
+
+    useEffect(()=>{
+        if(method === "google"){
+            router.push("/");
+        }
+    }, [method])
+
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -63,7 +70,6 @@ export default function LoginPage() {
                 router.push("/"); // or wherever
             }
         }
-        console.log("ERROR IN REGISTERING")
     }
 
 

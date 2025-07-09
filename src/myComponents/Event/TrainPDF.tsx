@@ -154,8 +154,8 @@ const TrainPDF = ({ ticket, qrCodeBase64, bookedSeats }: Props) => (
                 <View style={styles.movieDetails}>
                     <Text style={styles.movieTitle}>{ticket.title.toUpperCase()}</Text>
                     {/*<View style={{ flexDirection: 'row'}}>*/}
-                    {/*    <Text style={[styles.subtitle, {marginRight:25, marginBottom:5}]}>{ticket.movie.ageRating}</Text>*/}
-                    {/*    <Text style={styles.subtitle}>{ticket.language}</Text>*/}
+                    {/*    <Text style={[styles.subtitle, {marginRight:25, marginBottom:5}]}>{download-ticket.movie.ageRating}</Text>*/}
+                    {/*    <Text style={styles.subtitle}>{download-ticket.language}</Text>*/}
                     {/*</View>*/}
                     <Text style={styles.subtitle}># {ticket.trainId}</Text>
                 </View>
@@ -199,12 +199,12 @@ const TrainPDF = ({ ticket, qrCodeBase64, bookedSeats }: Props) => (
 
                     {/*<Text style={[styles.label, { marginTop: 8 }]}>Seats Info:</Text>*/}
                     {/*<View style={styles.seats}>*/}
-                    {/*    <Text>{ticket.noOfSeats}</Text>*/}
+                    {/*    <Text>{download-ticket.noOfSeats}</Text>*/}
                     {/*</View>*/}
 
                     {/*<View>*/}
                     {/*    <Text style={[styles.label, {marginBottom:7, marginTop:16}]}>Show ID:</Text>*/}
-                    {/*    <Text style={styles.infoDetails}>{ticket.showId}</Text>*/}
+                    {/*    <Text style={styles.infoDetails}>{download-ticket.showId}</Text>*/}
                     {/*</View>*/}
                     <View>
                         <Text style={[styles.label, {marginBottom:7, marginTop:16}]}>Booking ID:</Text>

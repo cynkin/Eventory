@@ -1,29 +1,58 @@
 'use client';
 import Image from "next/image"
 import logo from "@/images/logo.png"
-import {useRouter} from "next/navigation";
+import {useRouter, useSearchParams} from "next/navigation";
 import React, { useState } from "react";
 import {useAuthForm} from "@/app/context/AuthFormContext";
+import {signIn} from "next-auth/react";
+import {hashPassword} from "@/utils/hash";
 
 const inputStyle = " mt-6 placeholder:text-[#222] focus:outline-none focus:ring-2 focus:ring-[#1568e3] w-full border py-3.5 px-4 text-lg tracking-wide border-gray-400 rounded-lg"
 const buttonStyle = "w-full transition-all duration-200 tracking-wider  rounded-full px-9 py-3.5 text-lg font-semibold mt-2 "
 const listStyle = " px-2.5 text-base";
 
 export default function LoginPage() {
-
     const router = useRouter();
     const [error, setError] = useState("");
     const [password, setCurrentPassword] = useState('');
 
-    const {email, setPassword} = useAuthForm();
-    console.log("\nEmail:\n", email);
+    const searchParams = useSearchParams();
+    const searchEmail = searchParams.get("email");
+    const register = searchParams.get("register");
+
+    const {email, setPassword, setEmail} = useAuthForm();
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
         const password = formData.get("password") as string;
-        setPassword(password);
-        router.push("/login/register");
+        if(register === "false"){
+            const res = await fetch("/api/update-password", {
+                method: "POST",
+                headers:{"Content-Type": "application/json"},
+                body: JSON.stringify({email:searchEmail, password})
+            })
+            if(res?.ok){
+                // const data = await res.json();
+                const response = await signIn("credentials", {
+                    redirect: false,
+                    email:searchEmail,
+                    password: password
+                });
+
+                if (response?.error) {
+                    setError("Invalid credentials");
+                } else {
+                    router.push("/account/profile");
+                }
+
+            }
+        }
+        else{
+            if(searchEmail) setEmail(searchEmail)
+            setPassword(password);
+            router.push("/login/register");
+        }
     }
 
     const getStrength = (pwd: string) => {

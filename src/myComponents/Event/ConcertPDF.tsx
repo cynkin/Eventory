@@ -132,8 +132,8 @@ const ConcertPDF = ({ ticket, qrCodeBase64 }: Props) => (
                 <View style={styles.movieDetails}>
                     <Text style={styles.movieTitle}>{ticket.title.toUpperCase()}</Text>
                     {/*<View style={{ flexDirection: 'row'}}>*/}
-                    {/*    <Text style={[styles.subtitle, {marginRight:25, marginBottom:5}]}>{ticket.movie.ageRating}</Text>*/}
-                    {/*    <Text style={styles.subtitle}>{ticket.language}</Text>*/}
+                    {/*    <Text style={[styles.subtitle, {marginRight:25, marginBottom:5}]}>{download-ticket.movie.ageRating}</Text>*/}
+                    {/*    <Text style={styles.subtitle}>{download-ticket.language}</Text>*/}
                     {/*</View>*/}
                     <Text style={styles.subtitle}>{ticket.location}</Text>
                 </View>

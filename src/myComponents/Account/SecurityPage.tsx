@@ -20,14 +20,14 @@ export default function SecurityPage() {
 
                             <div className="text-[28px] font-medium mt-12">Sign in and Security</div>
                             <div className="text-sm mb-5">Keep your account safe with a secure password and by signing out of devices you&#39;re not actively using</div>
-                            <Link href="#" className="flex items-center border rounded-xl p-2 border-gray-300 w-fit">
+                            <Link href="/login/email/verification?change=email" className="flex items-center border rounded-xl p-2 border-gray-300 w-fit">
                                 <div className="flex px-2 w-64 flex-col">
                                     <span className="font-medium">Email</span>
                                     <span className="text-sm">{session.user.email}</span>
                                 </div>
                                 <ChevronRight className=""/>
                             </Link>
-                        <Link href="#" className="flex mt-5 items-center border rounded-xl p-2 border-gray-300 w-fit">
+                        <Link href="/login/email/verification?change=password" className="flex mt-5 items-center border rounded-xl p-2 border-gray-300 w-fit">
                             <div className="w-64 py-2 px-2 font-medium">Change Password</div>
                             <ChevronRight className=""/>
                         </Link>

@@ -32,7 +32,7 @@ export default function LoginPage() {
         if (res?.error) {
             setError("Invalid credentials");
         } else {
-            router.push("/"); // or wherever
+            router.push("/");
         }
 
     }
@@ -53,7 +53,7 @@ export default function LoginPage() {
                         <input type="password" name="password" placeholder="Password" className={inputStyle}
                                value={password} onChange={(e) => {setPassword(e.target.value); setError("");}}/>
 
-                        <Link href="#" className="text-lg text-blue-500">Forgot password?</Link>
+                        <Link href={`/login/email/verification?forgot=true&&email=${email}&register=false`} className="text-lg text-blue-500">Forgot password?</Link>
                         <button type="submit"
                                 className={buttonStyle}>
                             Sign in</button>

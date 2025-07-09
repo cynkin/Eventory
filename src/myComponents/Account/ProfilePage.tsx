@@ -42,6 +42,7 @@ export default function ProfilePage() {
                     },
                     body: JSON.stringify({userId})
                 })
+            if(!res.ok) throw new Error("Something went wrong");
             const data = await res.json();
             setContact(data);
             console.log(data);
@@ -58,11 +59,14 @@ export default function ProfilePage() {
     return(
         <>
             {edit === 'basic-info' ?
-                <ProfileForm/>
+                <div className="flex justify-center items-center w-full">
+                    <ProfileForm/>
+                </div>
+
             : edit === 'contact-info' ?
-            <>
-                <ContactForm/>
-            </>
+                <div className="flex justify-center items-center w-full">
+                    <ContactForm/>
+                </div>
             :
             <div className="flex flex-row">
                 <SidePanel/>
