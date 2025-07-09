@@ -5,7 +5,7 @@ import prisma from "@/lib/db";
 export async function POST(req: Request) {
     const {userId, role} = await req.json();
 
-    if(true) {
+    if(role === 'user') {
         const tickets = await prisma.concert_tickets.findMany({
             where: {user_id: userId},
             include: {
@@ -35,9 +35,18 @@ export async function POST(req: Request) {
 
         return NextResponse.json(result);
     }
-    // if(role === 'vendor') {
-    //     const concerts = await prisma.concerts.findMany({
-    //         where: {vendor_id: userId},
-    //     })
-    // }
+    if(role === 'vendor') {
+        const concerts = await prisma.concerts.findMany({
+            where:{vendor_id: userId},
+            include:{
+                concert_shows: true
+            }
+        })
+
+        const result = concerts.map(concert =>({
+                concert: concert,
+                shows: concert.concert_shows,
+        }))
+        return NextResponse.json(result);
+    }
 }

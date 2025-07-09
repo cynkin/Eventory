@@ -76,14 +76,14 @@ export const authOptions = {
 
                     });
 
-                    await prisma.contact.upsert({
-                        where:{id: newUser.id},
-                        update:{profile_pic : user.image},
-                        create:{
-                            id: newUser.id,
-                            profile_pic: user.image,
-                        }
-                    })
+                    // await prisma.contact.upsert({
+                    //     where:{id: newUser.id},
+                    //     update:{profile_pic : user.image},
+                    //     create:{
+                    //         id: newUser.id,
+                    //         profile_pic: user.image,
+                    //     }
+                    // })
 
                     token.id = newUser.id;
                     token.role = newUser.role;

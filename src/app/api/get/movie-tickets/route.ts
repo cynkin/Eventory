@@ -35,39 +35,96 @@ export async function POST(req: Request) {
     }
     if(role === 'vendor') {
         console.log("------ VENDOR Incoming request - Movie Tickets");
+
         const movies = await prisma.movies.findMany({
             where: {vendor_id: userId},
             include: {
-                theatres: true,
+                theatres: {
+                    include: {
+                        shows: true,
+                    }
+                },
             },
         })
 
+        const result = movies.map(movie => {
+            const theatreData = movie.theatres.map(theatre => {
+                const grouped: { date: string; details: { time: string; language: string }[] }[] = [];
+                for (const show of theatre.shows) {
+                    let group = grouped.find(g => g.date === show.date);
+                    if (!group) {
+                        group = { date: show.date, details: [] };
+                        grouped.push(group);
+                    }
+                    group.details.push({ time: show.time, language: show.language });
+                }
+
+                return {
+                    location: theatre.location,
+                    shows: grouped,
+                };
+            });
+            return{
+                movie: movie,
+                theatres: theatreData,
+            }
+        })
+
+
+
+        if(movies.length > 0) return NextResponse.json(result);
+
+
+
         const theatres = await prisma.theatres.findMany({
             where: {vendor_id: userId},
-            include:{
+            include: {
+                movie: true,
                 shows: true,
             }
         })
 
-        movies.map(movie => {
-            console.log("Movie", movie);
-        })
+        const movieMap = new Map<string, {
+            movie: typeof theatres[0]['movie'],
+            theatres: {
+                location: string,
+                shows: { date: string, details: { time: string, language: string }[] }[]
+            }[]
+        }>();
 
-        console.log("Theatres", theatres.length, theatres[0]);
+        for (const theatre of theatres) {
+            const movieId = theatre.movie.id;
 
-        // const result = theatres.map(theatre => ({
-        //
-        // }))
+            const grouped = [] as { date: string, details: { time: string, language: string }[] }[];
 
-        return NextResponse.json("");
+            for (const show of theatre.shows) {
+                let group = grouped.find(g => g.date === show.date);
+
+                if (!group) {
+                    group = {
+                        date: show.date,
+                        details: [],
+                    }
+                    grouped.push(group);
+                }
+                group.details.push({time: show.time, language: show.language})
+            }
+
+            if (!movieMap.has(movieId)) {
+                movieMap.set(movieId, {
+                    movie: theatre.movie,
+                    theatres: [],
+                })
+            }
+
+            movieMap.get(movieId)!.theatres.push({
+                location: theatre.location,
+                shows: grouped,
+            });
+        }
+
+        const value = Array.from(movieMap.values());
+        return NextResponse.json(value);
     }
 }
-
-// pg_dump \
-//   -Fc \
-//   -v \
-//   -d postgres://postgres:hibi9010@localhost:5432/ticketSystem \
-//   -n public \
-//   -f db_dump.bak
-
 

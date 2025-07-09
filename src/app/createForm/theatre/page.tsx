@@ -43,7 +43,7 @@ export default function CreateEventForm() {
         resolver: zodResolver(formSchema),
         defaultValues: {
             details:[{
-                date:"",cost:0, premiumCost: 0,
+                date:"",cost:undefined, premiumCost: undefined,
                 slots: [{
                     time:"",
                     language:""
@@ -167,7 +167,7 @@ export default function CreateEventForm() {
                     ))}
                     <button
                         type="button"
-                        onClick={() => appendDate({date: "", cost:0, premiumCost :0,
+                        onClick={() => appendDate({date: "", cost:undefined, premiumCost :undefined,
                             slots:[{time:"", language:""}]}, {shouldFocus: true})}
                         className="my-2 cursor-pointer font-medium hover:font-bold text-blue-600">
                         + Add Date

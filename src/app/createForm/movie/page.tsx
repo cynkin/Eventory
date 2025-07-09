@@ -20,7 +20,7 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-const GENRES = ["Action", "Drama", "Comedy", "Horror", "Thriller", "Sci-Fi", "Romance"];
+const GENRES = ["Action", "Drama", "Comedy", "Horror", "Thriller", "Sci-Fi", "Romance", "Adventure", "Spy", "Gore", "Supernatural", "Psychological"];
 const style = "w-full focus:outline-none focus:ring-[1.7px] focus:ring-gray-900 focus:placeholder:text-gray-700 border py-2 px-3 mt-1 rounded"
 
 export default function CreateEventForm() {

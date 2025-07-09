@@ -117,6 +117,10 @@ export default function TrainCard(props: TrainProps){
                 <div className="text-gray-600 ml-5 text-sm font-medium">{to12Hour(fromTime)}</div>
                 <div className="text-gray-600 mr-5  text-sm font-medium">{to12Hour(toTime)}</div>
             </div>
+            {/*<div className="flex items-center justify-between space-x-2 mb-4">*/}
+            {/*    <div className="text-gray-600 ml-5 text-sm font-medium">{formatDate(ticket.from.date)}</div>*/}
+            {/*    <div className="text-gray-600 mr-5  text-sm font-medium">{formatDate(ticket.to.date)}</div>*/}
+            {/*</div>*/}
 
             {/*<div className="flex text-sm px-1 py-0.5 text-gray-700">*/}
             {/*    <Calendar className="mx-2 mr-2 w-5 h-5"/>{props.fromDate} - {props.toDate}*/}

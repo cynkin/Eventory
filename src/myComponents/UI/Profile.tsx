@@ -118,7 +118,7 @@ export default function Profile() {
                                 ?
                                 <div className="rounded-full border-2 w-12 h-12 mr-2 relative overflow-hidden">
                                     <img alt="" className="scale-100 overflow-hidden transition-all ease-in-out duration-300"  style={{ objectFit:"cover", objectPosition: "center"}}
-                                         src={pic}  />
+                                         src={"pic"}  />
                                 </div>
                                 :
                                 <CircleUserRound className="mr-2" />
