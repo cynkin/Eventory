@@ -36,16 +36,43 @@ export async function POST(req: Request) {
     if(role === 'vendor') {
         console.log("------ VENDOR Incoming request - Movie Tickets");
 
-        const movies = await prisma.movies.findMany({
-            where: {vendor_id: userId},
-            include: {
-                theatres: {
-                    include: {
-                        shows: true,
-                    }
+        let movies;
+        if(userId === "admin"){
+            movies = await prisma.movies.findMany({
+                include: {
+                    theatres: {
+                        include: {
+                            shows: true,
+                        }
+                    },
                 },
-            },
-        })
+            })
+        }
+        else{
+            movies =  await prisma.movies.findMany({
+                where: {vendor_id: userId},
+                include: {
+                    theatres: {
+                        include: {
+                            shows: true,
+                        }
+                    },
+                },
+            })
+        }
+
+        if(userId === "admin"){
+            movies = await prisma.movies.findMany({
+                include: {
+                    theatres: {
+                        include: {
+                            shows: true,
+                        }
+                    },
+                },
+            })
+        }
+
 
         const result = movies.map(movie => {
             const theatreData = movie.theatres.map(theatre => {

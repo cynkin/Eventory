@@ -143,7 +143,7 @@ export default function Profile() {
                                 </div>
                                 <div className="text-sm font-medium text-center text-gray-900 mb-3">{session.user.email}</div>
                                 <div className="mb-4 flex justify-center text-xs font-semibold text-white">
-                                    <span className={`${session.user.role === 'user' ? "bg-blue-900" : "bg-[#ffba4c]"} px-2 py-1 rounded-sm mb-3`}>
+                                    <span className={`${session.user.role === 'user' ? "bg-blue-900" : session.user.role === 'vendor' ? "bg-[#ffba4c]" : "bg-red-600"} px-2 py-1 rounded-sm mb-3`}>
                                         {capitalize(session.user.role || "")}
                                     </span>
                                 </div>

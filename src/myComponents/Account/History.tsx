@@ -304,24 +304,7 @@ export default function History() {
                                             <div className="text-gray-600 mr-5  text-sm font-medium">{formatDate(ticket.to.date)}</div>
                                         </div>
                                     </div>
-                                    {/*<div key={index} className="text-nowrap">*/}
-                                    {/*    {ticket.shows.map((show:any, index:number) => (*/}
-                                    {/*        <div key={index} onClick={() => setConcertShow({show, id: ticket.concert.id})} className="bg-purple-700 hover:bg-purple-900 cursor-pointer py-2 px-3 text-white rounded-xl  my-2">{show.location}</div>*/}
-                                    {/*    ))}*/}
-                                    {/*</div>*/}
                                 </div>
-                                {/*{concertShow.show && concertShow.id === ticket.concert.id &&*/}
-                                {/*    <div className=" mx-6">*/}
-                                {/*        <div className="text-right my-4">*/}
-                                {/*            <button onClick={() => setConcertShow({show: null, id:null})} className="bg-red-400 hover:bg-red-500 cursor-pointer p-1 px-3 text-white rounded-full ">Show less</button>*/}
-                                {/*        </div>*/}
-                                {/*        <div className="flex p-3 px-4 mt-1 mb-3 bg-pink-50 rounded-2xl text-nowrap items-center flex-row space-x-20">*/}
-                                {/*            <div className="font-medium">{formatDate(concertShow.show.date)}</div>*/}
-                                {/*            <div className="font-medium">{to12(concertShow.show.time)}</div>*/}
-                                {/*            <div className="font-medium">{concertShow.show.seats} seats left</div>*/}
-                                {/*        </div>*/}
-                                {/*    </div>*/}
-                                {/*}*/}
                             </div>
                         ))}
                 </div>

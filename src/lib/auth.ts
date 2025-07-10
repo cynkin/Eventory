@@ -90,12 +90,14 @@ export const authOptions = {
                     token.balance = Number(newUser.balance);
                     token.name = newUser.name!;
                     token.email = newUser.email!;
+                    token.isNewUser = true;
                 } else {
                     token.id = existingUser.id;
                     token.role = existingUser.role;
                     token.balance = Number(existingUser.balance);
                     token.name = existingUser.name!;
                     token.email = existingUser.email!;
+                    token.isNewUser = false;
                 }
             }
 
@@ -126,6 +128,7 @@ export const authOptions = {
                 session.user.name = token.name as string;
                 session.user.balance = token.balance;
                 session.user.email = token.email;
+                session.user.isNew = token.isNewUser;
             }
             return session;
         },

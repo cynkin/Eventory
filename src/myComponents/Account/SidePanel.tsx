@@ -50,7 +50,7 @@ export default function SidePanel() {
                 </div>
             </div>
             <div className="text-center border rounded-xl border-gray-300 mt-6 pt-5 pb-3">
-                <span className={`${session.user.role === 'user' ? "bg-blue-900" : "bg-[#ffba4c]"} px-2 text-[13px] text-white font-[500] text-sm py-1 rounded-sm`}>
+                <span className={`${session.user.role === 'user' ? "bg-blue-900" : session.user.role === 'vendor' ? "bg-[#ffba4c]" : "bg-red-600"} px-2 text-[13px] text-white font-[500] text-sm py-1 rounded-sm`}>
                     {capitalize(session.user.role || "")}
                 </span>
                 <div className="mt-4 mb-1 text-sm font-[500]">Current Credits</div>

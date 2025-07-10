@@ -36,12 +36,24 @@ export async function POST(req: Request) {
         return NextResponse.json(result);
     }
     if(role === 'vendor') {
-        const concerts = await prisma.concerts.findMany({
-            where:{vendor_id: userId},
-            include:{
-                concert_shows: true
-            }
-        })
+
+        let concerts;
+        if(userId === "admin"){
+             concerts = await prisma.concerts.findMany({
+                include:{
+                    concert_shows: true
+                }
+            })
+        }
+        else{
+            concerts = await prisma.concerts.findMany({
+                where:{vendor_id: userId},
+                include:{
+                    concert_shows: true
+                }
+            })
+        }
+
 
         const result = concerts.map(concert =>({
                 concert: concert,

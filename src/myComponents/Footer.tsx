@@ -1,11 +1,16 @@
 'use client'
 import Link from "next/link";
 import {usePathname} from "next/navigation";
+import {useSession} from "next-auth/react";
 
 export default function Footer(){
+    const { data: session, status } = useSession();
+    const role = session?.user?.role;
     const pathname = usePathname();
     return(
         <>
+            {role !== 'admin' &&
+                <>
             {!pathname.startsWith('/login') &&
                 <footer className="bg-[#f9fafb] text-gray-700 py-6 mt-10 shadow-inner">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-sm">
@@ -17,6 +22,8 @@ export default function Footer(){
                         </div>
                     </div>
                 </footer>
+            }
+            </>
             }
         </>
     )
