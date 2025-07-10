@@ -42,6 +42,7 @@ export default function CreateEventForm() {
             duration:0,
             image: "",
             genres: [],
+            commission: 0,
         },
     });
 

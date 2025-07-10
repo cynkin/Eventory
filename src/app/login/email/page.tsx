@@ -29,6 +29,7 @@ export default function LoginPage() {
             return null;
         }
         else if(!res.ok){
+            console.log("res", res);
             setError("Something went wrong. Please try again.");
             return null;
         }
