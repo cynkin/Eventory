@@ -61,21 +61,10 @@ export async function POST(req: Request) {
             })
         }
 
-        if(userId === "admin"){
-            movies = await prisma.movies.findMany({
-                include: {
-                    theatres: {
-                        include: {
-                            shows: true,
-                        }
-                    },
-                },
-            })
-        }
-
-
+        let size =0;
         const result = movies.map(movie => {
             const theatreData = movie.theatres.map(theatre => {
+                size++;
                 const grouped: { date: string; details: { time: string; language: string }[] }[] = [];
                 for (const show of theatre.shows) {
                     let group = grouped.find(g => g.date === show.date);
@@ -98,10 +87,7 @@ export async function POST(req: Request) {
         })
 
 
-
-        if(movies.length > 0) return NextResponse.json(result);
-
-
+        if(userId === "admin") return NextResponse.json(result);
 
         const theatres = await prisma.theatres.findMany({
             where: {vendor_id: userId},
@@ -110,6 +96,8 @@ export async function POST(req: Request) {
                 shows: true,
             }
         })
+
+        if(theatres.length === size) return NextResponse.json(result);
 
         const movieMap = new Map<string, {
             movie: typeof theatres[0]['movie'],

@@ -62,10 +62,11 @@ export default function Page() {
     const [movie, setMovie] = useState<Movie>();
     const [theatres, setTheatres] = useState<any>([])
     const [loading, setLoading] = useState(true);
+    const [load, setLoad] = useState(false);
 
     useEffect(() => {
         if(!movieId) return;
-
+        setLoad(true);
         // const year = today.getFullYear();
         // const month = String(today.getMonth() + 1).padStart(2, '0'); // 0-indexed
         // const day = dateParam.padStart(2, '0');
@@ -81,6 +82,7 @@ export default function Page() {
             setTheatres(theatres);
             setMovie(movie);
             setLoading(false);
+            setLoad(false);
         };
 
         fetchMovie();
@@ -128,11 +130,11 @@ export default function Page() {
     if(!movieId) notFound();
     if(loading) return <Spinner/>
     if (!movie) return <div className="xl:px-44">Movie not found</div>;
-
+    console.log(movie);
     return(
         <div className="xl:px-44 pl-7 pr-4 py-10">
-            <div className="flex items-center space-x-40 xl:space-x-100">
-                <img src={movie.image} alt="banner" className="border-2 border-black p-5"/>
+            <div className="flex items-center space-x-40 xl:space-x-50">
+                <img src={movie.image} alt="banner" className="border-2 w-160 border-black p-5"/>
                 <div className="flex justify-center items-center flex-col">
                     <div className={`${font.className} self-start text-8xl`}>{movie.title.toUpperCase()}</div>
                     <div className="flex items-center self-start flex-row mt-7 space-x-2">
@@ -170,22 +172,25 @@ export default function Page() {
                 </SessionProvider>
             </div>
             <div className="mt-10 flex flex-col space-y-5">
-                {theatres.map((theatre:any, index:number) => (
-                    <div key={index} className="bg-blue-100 p-3 font-medium text-lg flex rounded-lg items-center space-x-60 xl:space-x-120 ">
-                        <div className="text-2xl font-extrabold">{theatre.location.toUpperCase()}</div>
-                        <div className="flex text-nowrap gap-6">
-                            {theatre.slots.map((slot, idx:number) => (
-                                <button onClick={()=> seatSelect(slot)} key={idx}  className="relative cursor-pointer border-2 border-blue-700 text-center rounded-xl px-6 pt-5 pb-2">
-                                    <div className="absolute shadow -top-2 left-1/2 -translate-x-1/2 px-2 rounded-lg bg-white font-extrabold text-xs tracking-wide">
-                                        {slot.language}
-                                    </div>
-                                    <div className="self-center">{slot.time}</div>
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                ))}
-
+                {load ? <Spinner/> :
+                    <>
+                        {theatres.map((theatre:any, index:number) => (
+                            <div key={index} className="bg-blue-100 p-3 font-medium text-lg flex rounded-lg items-center space-x-60 xl:space-x-120 ">
+                                <div className="text-2xl font-extrabold">{theatre.location.toUpperCase()}</div>
+                                <div className="flex text-nowrap gap-6">
+                                    {theatre.slots.map((slot, idx:number) => (
+                                        <button onClick={()=> seatSelect(slot)} key={idx}  className="relative cursor-pointer border-2 border-blue-700 text-center rounded-xl px-6 pt-5 pb-2">
+                                            <div className="absolute shadow -top-2 left-1/2 -translate-x-1/2 px-2 rounded-lg bg-white font-extrabold text-xs tracking-wide">
+                                                {slot.language}
+                                            </div>
+                                            <div className="self-center">{slot.time}</div>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </>
+                }
             </div>
         </div>
     )

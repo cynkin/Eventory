@@ -89,9 +89,11 @@ export default function Event(props: EventProps) {
         <>
             <div className="flex flex-col relative mx-8 my-8 mb-14 ">
                 <div className="text-2xl font-[600] xl:px-44 mb-4 transition-all duration-1100 dark:text-white">
-                    {(props.type === 'movie') &&
+                    {movies.length > 0 &&
+                    <>
+                        {(props.type === 'movie') &&
                         <div className="flex space-x-8 items-center">
-                            <div>There&#39;s Plenty of Popcorn!</div>
+                            <div>Movies Trending Right Now!</div>
                             {session && session.user.role === 'vendor' &&
                                 <button onClick={() => setOpen((prev) => !prev)} className="bg-[#151515] cursor-pointer rounded-full p-1 flex items-center font-light text-white text-sm">
                                     <Info/>
@@ -99,8 +101,10 @@ export default function Event(props: EventProps) {
                                 </button>
                             }
                         </div>}
-                    {(props.type === 'train') && "Zoom you go!"}
-                    {(props.type === 'concert') && "Feel The Music!"}
+                    </>
+                    }
+                    {(props.type === 'train') && trains.length > 0 && "Travel and Explore!"}
+                    {(props.type === 'concert') && concerts.length > 0 && "Enjoy the Most Awaited Concerts!"}
                 </div>
                 <div className="w-full overflow-hidden xl:px-44 transition-all duration-800">
                     {canScrollLeft &&

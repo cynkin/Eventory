@@ -31,7 +31,7 @@ export default function MovieCard({title, image, ageRating, genres, duration, id
                         <img alt="" className="scale-100 overflow-hidden transition-all ease-in-out duration-300"  style={{ objectFit:"cover", objectPosition: "center"}}
                                src={image}  />
                     </div>
-                    <div className="mt-4 px-3 mb-2 text-[17px] font-medium ">{title}</div>
+                    <div className="mt-4 px-3 mb-2 text-[17px] text-wrap font-medium ">{title}</div>
                     <div className="flex text-sm px-1 py-0.5 text-gray-700">
                         <UserLock className="mx-2 mr-2 w-5 h-5" /> {ageRating}
                     </div>

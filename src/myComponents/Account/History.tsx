@@ -92,6 +92,7 @@ export default function History() {
                 })
             const data = await res.json();
             setMovieTickets(data);
+            console.log(data);
         };
 
         const fetchConcertTickets = async () => {
@@ -125,7 +126,7 @@ export default function History() {
         fetchTrainTickets();
     }, [role, userId]);
 
-    if (status === "loading") return (<Spinner/>);
+    // if (status === "loading") return (<Spinner/>);
     if(!session) return;
 
     async function handleDownload(ticket: MovieTicket | ConcertTicket | TrainTicket) {
