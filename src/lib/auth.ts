@@ -1,9 +1,10 @@
 import CredentialsProvider from "next-auth/providers/credentials";
-import GoogleProvider from "next-auth/providers/google";
 import { comparePassword } from "@/utils/hash";
 import prisma from "@/lib/db";
 import { JWT } from "next-auth/jwt";
+import { decodeJwt } from "@/lib/decodeJwt";
 import {User, Session, SessionStrategy, Account, Profile} from "next-auth";
+import {NextRequest} from "next/server";
 
 
 export const authOptions = {
@@ -19,24 +20,45 @@ export const authOptions = {
                     where : {email : credentials?.email},
                 });
 
-                if(!user || !credentials?.password) return null;
+                let google = false;
+                if(credentials?.password === 'google') {
+                    google = true;
+                }else{
+                    if(!user || !credentials?.password) return null;
 
-                const isValid = await comparePassword(credentials.password, user.password!);
-                if(!isValid) return null;
+                    const isValid = await comparePassword(credentials.password, user.password!);
+                    if(!isValid) return null;
+                }
 
+                if(!user) {
+                    const newUser = await prisma.users.create({
+                        data:{
+                            email: credentials?.email,
+                            name: 'google',
+                            role: "user",
+                            balance: 1000,
+                            google_id: google ? credentials?.email : undefined,
+                        }
+                    })
+                    return{
+                        id: newUser.id,
+                        name: newUser.name,
+                        email: newUser.email,
+                        role: newUser.role,
+                        balance: newUser.balance ? Number(newUser.balance) : 0,
+                        google: google,
+                    };
+                }
                 return{
                     id: user.id,
                     name: user.name,
                     email: user.email,
                     role: user.role,
                     balance: user.balance ? Number(user.balance) : 0,
+                    google: google,
                 };
             },
         }),
-        GoogleProvider({
-            clientId: process.env.GOOGLE_CLIENT_ID!,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-        })
     ],
     pages: {
         signIn : "/login/email",
@@ -48,60 +70,80 @@ export const authOptions = {
         async jwt({token,
                       user,
                       trigger,
-                      account,
-                      profile,
                       session} :
                   {token:JWT;
                       user?:User;
-                      trigger?:"update";
+                      trigger?: "update" | "create";
                       session?:Session;
-                      account?: Account;
-                      profile?: Profile;
-                  }){
+                  },){
 
-            if (user && account?.provider === "google") {
-                const existingUser = await prisma.users.findUnique({
-                    where: { email: user.email! },
-                });
+            //
+            // if (!token.id && req?.cookies?.get("auth_token")) {
+            //     const raw = req.cookies.get("auth_token")?.value;
+            //     if (raw) {
+            //         try {
+            //             const decoded = decodeJwt(raw);
+            //             console.log("Decoded JWT:", decoded);
+            //
+            //             token.id = decoded.id;
+            //             token.name = decoded.name;
+            //             token.email = decoded.email;
+            //             token.role = decoded.role;
+            //             token.balance = decoded.balance;
+            //             token.isNewUser = false;
+            //         } catch (err) {
+            //             console.error("Invalid auth_token:", err);
+            //         }
+            //     } else {
+            //         console.warn("auth_token cookie not found in request");
+            //     }
+            // }
 
-                if (!existingUser) {
-                    const newUser = await prisma.users.create({
-                        data: {
-                            email: user.email!,
-                            name: user.name,
-                            role: "user", // Default role
-                            balance: 1000,
-                            google_id: account.providerAccountId,
-                        },
 
-                    });
 
-                    // await prisma.contact.upsert({
-                    //     where:{id: newUser.id},
-                    //     update:{profile_pic : user.image},
-                    //     create:{
-                    //         id: newUser.id,
-                    //         profile_pic: user.image,
-                    //     }
-                    // })
+            // if (user && account?.provider === "google") {
+            //     const existingUser = await prisma.users.findUnique({
+            //         where: { email: user.email! },
+            //     });
+            //
+            //     if (!existingUser) {
+            //         const newUser = await prisma.users.create({
+            //             data: {
+            //                 email: user.email!,
+            //                 name: user.name,
+            //                 role: "user",
+            //                 balance: 1000,
+            //                 google_id: account.providerAccountId,
+            //             },
+            //
+            //         });
+            //
+            //         // await prisma.contact.upsert({
+            //         //     where:{id: newUser.id},
+            //         //     update:{profile_pic : user.image},
+            //         //     create:{
+            //         //         id: newUser.id,
+            //         //         profile_pic: user.image,
+            //         //     }
+            //         // })
+            //
+            //         token.id = newUser.id;
+            //         token.role = newUser.role;
+            //         token.balance = Number(newUser.balance);
+            //         token.name = newUser.name!;
+            //         token.email = newUser.email!;
+            //         token.isNewUser = true;
+            //     } else {
+            //         token.id = existingUser.id;
+            //         token.role = existingUser.role;
+            //         token.balance = Number(existingUser.balance);
+            //         token.name = existingUser.name!;
+            //         token.email = existingUser.email!;
+            //         token.isNewUser = false;
+            //     }
+            // }
 
-                    token.id = newUser.id;
-                    token.role = newUser.role;
-                    token.balance = Number(newUser.balance);
-                    token.name = newUser.name!;
-                    token.email = newUser.email!;
-                    token.isNewUser = true;
-                } else {
-                    token.id = existingUser.id;
-                    token.role = existingUser.role;
-                    token.balance = Number(existingUser.balance);
-                    token.name = existingUser.name!;
-                    token.email = existingUser.email!;
-                    token.isNewUser = false;
-                }
-            }
-
-            else if(user){
+            if(user){
                 token.id = user.id ?? token.sub;
                 token.balance = user.balance;
                 token.role = user.role ?? "user";
@@ -128,7 +170,7 @@ export const authOptions = {
                 session.user.name = token.name as string;
                 session.user.balance = token.balance;
                 session.user.email = token.email;
-                session.user.isNew = token.isNewUser;
+                session.user.isNew = token.isNewUser || false;
             }
             return session;
         },
