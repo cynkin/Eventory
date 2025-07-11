@@ -135,6 +135,7 @@ model tickets {
   id      String   @id @default(uuid())
   amount  Float
   seats   String[]
+  status  String?  @default("verified")
   user_id String   @db.Uuid
   show_id String   @db.Uuid
   show    shows    @relation(fields: [show_id], references: [id])

@@ -1,12 +1,13 @@
 import {Document, Image, Page, StyleSheet, Text, View,} from '@react-pdf/renderer';
-import logo from "@/images/logo.png"
+import { getBase64 } from '@/utils/getBase64';
+const logoBase64 = getBase64('src/images/logo.png');
 
 const styles = StyleSheet.create({
     page: {
         padding: 30,
         fontSize: 14,
         fontFamily: 'Helvetica',
-        backgroundColor: '#f9fafb', // light gray bg like the site
+        backgroundColor: '#f9fafb',
     },
     header: {
         flexDirection: 'row',
@@ -118,7 +119,6 @@ const styles = StyleSheet.create({
 //     title : train.title,
 // }
 
-// Props
 type TrainTicket = {
     title: string;
     noOfSeats: number;
@@ -133,7 +133,7 @@ type TrainTicket = {
 type Props = {
     ticket: TrainTicket;
     qrCodeBase64: string;
-    bookedSeats : string[],// Pass base64 QR here
+    bookedSeats : string[],
 };
 
 function formatDate(dateStr: string){
@@ -148,8 +148,7 @@ function formatDate(dateStr: string){
 const TrainPDF = ({ ticket, qrCodeBase64, bookedSeats }: Props) => (
     <Document>
         <Page size={[595, 620]} style={styles.page}>
-            <Image src={logo.src}/>
-            {/* Header */}
+            <Image src={logoBase64} style={{ width: 150}} />
             <View style={styles.header}>
                 <View style={styles.movieDetails}>
                     <Text style={styles.movieTitle}>{ticket.title.toUpperCase()}</Text>

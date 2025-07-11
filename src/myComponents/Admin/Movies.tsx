@@ -1,4 +1,6 @@
 import {useEffect, useState} from "react";
+import Link from "next/link";
+import {useSearchParams} from "next/navigation";
 
 function formatDate(dateStr: string){
     const date = new Date(dateStr);
@@ -11,16 +13,14 @@ function formatDate(dateStr: string){
 
 export default function Movies() {
     const [movieTickets, setMovieTickets] = useState<any[]>([]);
-
+    const searchParams = useSearchParams();
+    const userId = searchParams.get('id');
     const [theatre, setTheatre] = useState<any>({
         theatre: null,
         id: null,
     })
 
-
-
     useEffect(() => {
-
         const fetchMovieTickets = async () => {
             const res = await fetch(`/api/get/movie-tickets`,
                 {
@@ -33,7 +33,6 @@ export default function Movies() {
             const data = await res.json();
             setMovieTickets(data);
         };
-
         fetchMovieTickets();
     }, []);
 
@@ -47,8 +46,8 @@ export default function Movies() {
                         <div className="flex mt-6 flex-row items-center flex-wrap">
                             {movieTickets && movieTickets.length > 0 &&
                                 movieTickets.map((ticket:any, index:number) => (
-                                    <div key={index} className="border-2 p-2 flex flex-col m-2 text-sm rounded-xl w-full border-pink-600 shadow-xs">
-                                        <div className="flex flex-row">
+                                    <div key={index} className={`border-2 p-2 flex ${ticket.movie.vendor_id === userId && 'bg-pink-50'} flex-col m-2 text-sm rounded-xl w-full border-pink-600 shadow-xs`}>
+                                        <div className="flex relative flex-row">
                                             <div className="m-2 w-[411px] h-[167px] ">
                                                 <img alt="" className=" rounded-xl scale-100 h-full w-auto overflow-hidden transition-all ease-in-out duration-300"  style={{ objectFit:"cover", objectPosition: "center"}}
                                                      src={ticket.movie.image}  />
@@ -69,13 +68,13 @@ export default function Movies() {
                                                 <div className="ml-1">
                                                     {ticket.movie.description}
                                                 </div>
-
                                             </div>
-                                            <div key={index} className="text-nowrap">
+                                            <div key={index} className="text-nowrap mt-7">
                                                 {ticket.theatres.map((theatre:any, index:number) => (
-                                                    <div key={index} onClick={()=>setTheatre({theatre, id:ticket.movie.id})} className="bg-pink-700 hover:bg-pink-900 cursor-pointer py-2 px-3 text-white rounded-xl  my-2">{theatre.location}</div>
+                                                    <div key={index} onClick={()=>setTheatre({theatre, id:ticket.movie.id})} className="bg-pink-700 hover:bg-pink-100 hover:text-pink-700 transition-all duration-200 cursor-pointer py-2 px-3 text-white rounded-xl  my-2">{theatre.location}</div>
                                                 ))}
                                             </div>
+                                            <Link href={`/?q=users&id=${ticket.movie.vendor_id}`} className="absolute right-1 px-2 m-1 hover:bg-gray-100 hover:text-black transition-all duration-200 bg-black text-white rounded-full">{ticket.movie.vendor_id}</Link>
                                         </div>
                                         {theatre.theatre && theatre.id === ticket.movie.id &&
                                             <div className=" mx-6">

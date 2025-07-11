@@ -1,11 +1,13 @@
 import {Document, Image, Page, StyleSheet, Text, View,} from '@react-pdf/renderer';
+import { getBase64 } from '@/utils/getBase64';
+const logoBase64 = getBase64('src/images/logo.png');
 
 const styles = StyleSheet.create({
     page: {
         padding: 30,
         fontSize: 14,
         fontFamily: 'Helvetica',
-        backgroundColor: '#f9fafb', // light gray bg like the site
+        backgroundColor: '#f9fafb',
     },
     header: {
         flexDirection: 'row',
@@ -67,8 +69,8 @@ const styles = StyleSheet.create({
     seatBox: {
         padding: 6,
         borderRadius: 6,
-        backgroundColor: '#e0f2fe', // light blue bg
-        color: '#0284c7',           // blue text
+        backgroundColor: '#e0f2fe',
+        color: '#0284c7',
         marginRight: 6,
         marginBottom: 2,
         fontSize: 15
@@ -95,7 +97,6 @@ const styles = StyleSheet.create({
     },
 });
 
-// Props
 type ConcertTicket = {
     image: string;
     title: string;
@@ -111,13 +112,13 @@ type ConcertTicket = {
 
 type Props = {
     ticket: ConcertTicket;
-    qrCodeBase64: string; // Pass base64 QR here
+    qrCodeBase64: string;
 };
 
 function formatDate(dateStr: string){
     const date = new Date(dateStr);
     const weekday = date.toLocaleString('en-US', { weekday: 'short' })
-    const day = date.getDate(); // returns 23 (no leading zero)
+    const day = date.getDate();
     const month = date.toLocaleString('en-US', { month: 'short' }); // "Jul"
 
     return `${weekday}, ${day} ${month}`;
@@ -126,7 +127,7 @@ function formatDate(dateStr: string){
 const ConcertPDF = ({ ticket, qrCodeBase64 }: Props) => (
     <Document>
         <Page size={[595, 620]} style={styles.page}>
-            {/* Header */}
+            <Image src={logoBase64} style={{ width: 150}} />
             <View style={styles.header}>
                 <Image src={ticket.image} style={styles.movieImage} />
                 <View style={styles.movieDetails}>

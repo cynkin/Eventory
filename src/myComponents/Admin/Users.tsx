@@ -1,8 +1,11 @@
 'use client'
 import {useEffect, useState} from "react";
+import {useSearchParams} from "next/navigation";
+import Link from "next/link";
 
 export default function Users() {
-
+    const searchParams = useSearchParams();
+    const id = searchParams.get('id');
     const [users, setUsers] = useState([]);
 
     useEffect(() => {
@@ -38,7 +41,7 @@ export default function Users() {
                     </div>
 
                     {users && users.map((user: any, index) => (
-                        <div key={index} className="flex text-sm text-gray-800 border-t border-gray-800 items-center text-center">
+                        <div key={index} className={`flex text-sm ${user.id === id && 'bg-yellow-50'} text-gray-800 border-t border-gray-800 items-center text-center`}>
                             <div className="w-3/12 flex flex-col py-2 ">
                                 <div className="font-bold">{user.name}</div>
                                 <div className="text-gray-700">{user.email}</div>
@@ -50,7 +53,7 @@ export default function Users() {
 
                             <div className="w-2/12 py-2 ">&#8377; {user.balance}</div>
                             <div className="w-1/12 py-2 ">{getWeeks(user.created_at)}</div>
-                            <div className="w-4/12 py-2 truncate">{user.id}</div>
+                            <Link href={`/?q=movies&id=${user.id}`} className="w-4/12 hover:bg-black hover:text-white transition-all duration-300 py-2 truncate">{user.id}</Link>
                         </div>
                     ))}
                 </div>

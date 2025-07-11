@@ -229,8 +229,14 @@ export default function Page() {
             socket.emit("seat:select", {code, slotId});
         }
         else if (isDeselecting) {
-            if(type === "vip") setAmount(prev => prev - COSTS[1]!);
-            else setAmount(prev => prev - COSTS[0]!);
+            if(type === "vip") {
+                setAmount(prev => prev - COSTS[1]!);
+                setType(prev => ({...prev, vip: prev.vip - 1}));
+            }
+            else {
+                setAmount(prev => prev - COSTS[0]!);
+                setType(prev => ({...prev, regular: prev.regular - 1}));
+            }
             setSelectedSeats(prev => prev.filter(c => c !== code));
             socket.emit("seat:unselect", {code, slotId});
         }

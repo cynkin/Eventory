@@ -71,8 +71,9 @@ export async function DELETE(req: Request) {
                     data: {balance: {decrement: refundAmt}}
                 }),
 
-                prisma.tickets.delete({
-                    where: {id: data.booking_id}
+                prisma.tickets.update({
+                    where: {id: data.booking_id},
+                    data: {status: "cancelled"}
                 }),
 
                 prisma.shows.update({

@@ -313,16 +313,23 @@ export default function History() {
                 <div className="flex mt-6 flex-row items-center flex-wrap">
                     {movieTickets && movieTickets.length > 0 &&
                         movieTickets.map((ticket:any, index:number) => (
-                            <div key={index} className="border-2 p-2 m-2 text-sm rounded-xl w-fit border-pink-600 shadow-xs">
+                            <div key={index} className={`border-2 relative ${ticket.status === 'cancelled' && 'bg-red-50'} p-2 m-2 text-sm rounded-xl w-fit border-pink-600 shadow-xs`}>
+                                {ticket.status === 'cancelled' && (
+                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-[-25deg] tracking-widest text-red-600 text-4xl font-bold opacity-50 pointer-events-none select-none">
+                                        CANCELLED
+                                    </div>
+                                )}
                                 <div className="font-medium mb-1 text-lg">{ticket.movie.title}</div>
                                 <div>{ticket.time}</div>
                                 <div>{formatDate(ticket.date)}</div>
                                 <div>{ticket.location}</div>
                                 <div className="mt-1 font-bold">Total : &#8377; {ticket.amount}</div>
-                                <div className="flex mt-2 justify-between items-center">
-                                    <button onClick={() => handleDownload(ticket)} className="bg-blue-400 hover:bg-blue-500 cursor-pointer p-1 px-3 text-white rounded-full mr-2">Download Ticket</button>
-                                    <button onClick={() => cancelTicket(ticket)} className="bg-red-400 hover:bg-red-500 cursor-pointer p-1 px-3 text-white rounded-full ">Cancel Ticket</button>
-                                </div>
+                                {ticket.status !== 'cancelled' && ticket.status !== 'expired' &&
+                                    <div className="flex mt-2 justify-between items-center">
+                                        <button onClick={() => handleDownload(ticket)} className="bg-blue-400 hover:bg-blue-500 cursor-pointer p-1 px-3 text-white rounded-full mr-2">Download Ticket</button>
+                                        <button onClick={() => cancelTicket(ticket)} className="bg-red-400 hover:bg-red-500 cursor-pointer p-1 px-3 text-white rounded-full ">Cancel Ticket</button>
+                                    </div>
+                                }
                             </div>
                         ))
                     }

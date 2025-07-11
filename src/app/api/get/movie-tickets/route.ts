@@ -29,6 +29,7 @@ export async function POST(req: Request) {
             booking_id: ticket.id,
             theatre_id: ticket.show.theatre_id,
             show_id: ticket.show.id,
+            status: ticket.status,
         }));
 
         return NextResponse.json(result);
