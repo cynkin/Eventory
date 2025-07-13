@@ -204,7 +204,7 @@ export default function Page() {
         if(!SLOT) return;
 
         const currentSeat = seatLayout?.[row]?.[col];
-        if (!currentSeat || currentSeat.status === "booked" || currentSeat.status === "held") return;
+        if (!currentSeat || currentSeat.status === "booked" || currentSeat.status === "held" || currentSeat.type === 'disabled') return;
 
         const {code, status, type} = currentSeat;
 
@@ -344,7 +344,7 @@ export default function Page() {
                                     return (
                                         <div
                                             key={`${rowIdx}-${colIdx}`}
-                                            className={`w-7 h-7 rounded-xs select-none cursor-pointer ${getSeatColor(seat)} flex items-center justify-center text-gray-700 text-[11px] font-medium`}
+                                            className={`w-7 h-7 rounded-xs select-none ${seat.type !== 'disabled' && 'cursor-pointer' } ${getSeatColor(seat)} flex items-center justify-center text-gray-700 text-[11px] font-medium`}
                                             onClick={() => select(rowIdx, colIdx)}
                                             // title={`Row ${rowIdx + 1}, Col ${colIdx + 1}`}
                                         >

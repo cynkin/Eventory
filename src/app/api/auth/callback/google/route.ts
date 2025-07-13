@@ -12,7 +12,6 @@ export async function GET(req: NextRequest) {
     if (!code) return NextResponse.redirect("/login/email");
     // console.log("Code", code);
 
-    // 1. Exchange code for token
     const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -30,7 +29,6 @@ export async function GET(req: NextRequest) {
     if (!accessToken) return NextResponse.redirect("/login/email");
 
     // console.log("Access token", accessToken);
-    // 2. Get user info
     const userInfoRes = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
         headers: { Authorization: `Bearer ${accessToken}` },
     });
@@ -38,6 +36,7 @@ export async function GET(req: NextRequest) {
 
     console.log("Google user", googleUser);
     const { email, name, id: google_id, picture } = googleUser;
+    console.log("picture", picture);
     if (!email) return NextResponse.redirect("/login/email");
 
     // 3. Create or fetch user

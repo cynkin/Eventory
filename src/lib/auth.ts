@@ -21,7 +21,7 @@ export const authOptions = {
                 });
 
                 let google = false;
-                if(credentials?.password === 'google') {
+                if(credentials?.password === process.env.GOOGLE_PASSWORD!) {
                     google = true;
                 }else{
                     if(!user || !credentials?.password) return null;
