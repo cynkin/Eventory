@@ -16,9 +16,9 @@ type EventProps = {
 
 function formatDate(dateStr: string){
     const date = new Date(dateStr);
-    const day = date.getDate(); // returns 23 (no leading zero)
-    const month = date.toLocaleString('en-US', { month: 'short' }); // "Jul"
-    const year = date.getFullYear(); // 2025
+    const day = date.getDate();
+    const month = date.toLocaleString('en-US', { month: 'short' });
+    const year = date.getFullYear();
 
     return `${day} ${month}, ${year}`;
 }
@@ -78,7 +78,7 @@ export default function Event(props: EventProps) {
         checkScroll();
 
         el.addEventListener("scroll", checkScroll);
-        window.addEventListener("resize", checkScroll); // for responsiveness
+        window.addEventListener("resize", checkScroll);
 
         return () => {
             el.removeEventListener("scroll", checkScroll);

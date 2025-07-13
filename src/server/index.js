@@ -33,6 +33,7 @@ io.on("connection", async (socket) => {
     socket.on("auth:user", (userId) => {
         socket.data.userId = userId;
         console.log("User:", userId);
+        // console.log("heldseats", heldSeatsBySlot, "seatsSocket",seatsHeldBySocket);
     });
 
     socket.on("join-room", async({slotId}) => {
@@ -46,7 +47,6 @@ io.on("connection", async (socket) => {
 
     socket.on("seat:select", ({code, slotId}) => {
         const userId = socket.data.userId;
-        console.log(userId);
         if(!userId) return;
 
         if(!heldSeatsBySlot.has(slotId)) heldSeatsBySlot.set(slotId, new Map())
@@ -89,6 +89,7 @@ io.on("connection", async (socket) => {
         const userId = socket.data.userId;
         if(!userId || !seats.length) return;
         console.log("Confirming Seats")
+
         const show = await prisma.shows.findUnique({
             where: {id: slotId}
         })
@@ -202,8 +203,6 @@ io.on("connection", async (socket) => {
 
     socket.on("disconnect", () => {
         console.log("Disconnected:", socket.id);
-        console.log("Remaining clients:", io.engine.clientsCount);
-
         const socketSeats = seatsHeldBySocket.get(socket.id);
         if(socketSeats) {
             for (const { slotId, seatCode } of socketSeats) {
@@ -216,6 +215,7 @@ io.on("connection", async (socket) => {
             }
             seatsHeldBySocket.delete(socket.id);
         }
+        console.log("Remaining clients:", io.engine.clientsCount);
     });
 });
 
