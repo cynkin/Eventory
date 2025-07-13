@@ -27,15 +27,18 @@ export default function Users() {
         return Math.floor(diffInMs / (1000 * 60 * 60 * 24 * 7));
     }
 
-    const suspendUser = (id:string) => async () => {
+    const suspendUser = (id:string, action:string) => async () => {
         const res = await fetch("/api/user/suspend", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({userId: id})
+            body: JSON.stringify({user_id: id, action})
         })
-        alert(res.statusText);
+
+        if(action !== 'suspended') alert("User suspended successfully");
+        else alert("User unsuspended successfully");
+        window.location.reload();
     }
 
     const deleteUser = (id:string) => async () => {
@@ -53,8 +56,8 @@ export default function Users() {
                         <div className="w-1/12 py-2 border-r border-gray-800">Role</div>
                         <div className="w-1/12 py-2 border-r border-gray-800">Balance</div>
                         <div className="w-1/12 py-2 border-r border-gray-800">Weeks</div>
-                        <div className="w-4/12 py-2">Customer ID</div>
-                        <div className="w-2/12 py-2">Actions</div>
+                        <div className="w-4/12 py-2 border-r border-gray-800">Customer ID</div>
+                        <div className="w-2/12 py-2">Actions(Suspend/Delete)</div>
                     </div>
 
                     {users && users.map((user: any, index) => (
@@ -70,10 +73,10 @@ export default function Users() {
 
                             <div className="w-1/12 py-2 ">&#8377; {user.balance}</div>
                             <div className="w-1/12 py-2 ">{getWeeks(user.created_at)}</div>
-                            <Link href={"#"} className="w-4/12 hover:bg-black hover:text-white transition-all duration-300 py-2 truncate">{user.id}</Link>
-                            <div className="w-2/12 flex flex-row space-x-20 transition-all duration-300  truncate">
-                                <Ban onClick={suspendUser(user.id)} className=" cursor-pointer hover:text-red-500"/>
-                                <UserRoundX onClick={deleteUser(user.id)} className="cursor-pointer hover:text-red-500"/>
+                            <Link href={"#"} className="w-4/12 hover:bg-black hover:text-white transition-all duration-300 py-2">{user.id}</Link>
+                            <div className="w-2/12 flex px-15 flex-row justify-between transition-all duration-300  truncate">
+                                <Ban onClick={suspendUser(user.id, user.google_id)} className={`cursor-pointer ${user.google_id === 'suspended' ? 'text-red-500 hover:text-green-500' : 'text-green-500 hover:text-red-500' }`}/>
+                                <UserRoundX onClick={deleteUser(user.id)} className="cursor-pointer text-green-500 hover:text-red-500"/>
                             </div>
                         </div>
                     ))}

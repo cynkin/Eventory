@@ -25,8 +25,8 @@ export default function Profile() {
     const profileRef = useRef<HTMLDivElement>(null);
     const [balance, setBalance] = useState(session?.user?.balance || 0);
     const [pic, setPic] = useState("");
+    const [user, setUser] = useState<any>();
 
-    // Close dropdowns when clicking outside
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (eventRef.current && !eventRef.current.contains(event.target as Node)) {
@@ -45,7 +45,9 @@ export default function Profile() {
         async function getBalance() {
             const user = await getUser(session?.user?.id || "");
             setBalance(user?.balance || 0);
+            setUser(user);
             console.log(user);
+
             if(user?.google_id === 'new') {
                 router.push('/login/register?method=google');
             }
@@ -79,6 +81,17 @@ export default function Profile() {
 
     }, [session]);
 
+    const handleCreate = () => {
+        if(user?.role === 'vendor' && user?.google_id === 'suspended') {
+            return() => alert("Your account has been suspended. Please contact support for more information.");
+        }
+        else{
+            return () => {
+                setShowEventDropdown(!showEventDropdown);
+            }
+        }
+    }
+
     if (status === "loading") return <Spinner />;
     return (
         <>
@@ -87,7 +100,7 @@ export default function Profile() {
                     <div className="relative mr-4" ref={eventRef}>
                         {session.user.role === 'vendor' &&
                             <button
-                                onClick={() => setShowEventDropdown(!showEventDropdown)}
+                                onClick={handleCreate()}
                                 className="my-2 focus:outline-none flex flex-row items-center rounded-full cursor-pointer bg-[#191e3b] hover:bg-[#ffc94c] transition-all duration-200 shadow-lg"
                             >
                                 <div className="p-2 m-2 rounded-full bg-[#ffc94c]">

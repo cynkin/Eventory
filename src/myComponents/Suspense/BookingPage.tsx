@@ -1,6 +1,6 @@
 'use client'
 import {notFound, useRouter, useSearchParams} from "next/navigation";
-import {getMovie, getTheatres} from "@/utils/getFromDb";
+import {getMovie, getTheatres, getUser} from "@/utils/getFromDb";
 import {useEffect, useMemo, useState} from "react";
 import Spinner from "@/myComponents/UI/Spinner";
 import {New_Rocker} from "next/font/google";
@@ -11,6 +11,7 @@ import AddTheatre from "@/myComponents/UI/AddTheatre";
 import Commission from "@/myComponents/UI/Commission"
 import {useEventStore} from "@/stores/eventStore";
 import {Slot} from "../../../types/eventStore"
+import {useSession} from "next-auth/react";
 
 const font = New_Rocker({
     subsets:['latin'],
@@ -45,6 +46,7 @@ type Movie = {
 
 
 export default function Page() {
+    const {data: session, status} = useSession();
     const searchParams = useSearchParams();
     const movieId = searchParams.get('movieId');
     const router = useRouter();
@@ -58,7 +60,8 @@ export default function Page() {
         const day = String(today.getDate()).padStart(2, '0');
         dateParam = `${year}-${month}-${day}`;
     }
-
+    
+    const [user, setUser] = useState<any>();
     const [movie, setMovie] = useState<Movie>();
     const [theatres, setTheatres] = useState<any>([])
     const [loading, setLoading] = useState(true);
@@ -88,6 +91,17 @@ export default function Page() {
         fetchMovie();
 
     }, [movieId,dateParam]);
+    
+    
+    useEffect(() =>{
+        if(!session?.user?.id) return;
+        const getUserFromDB = async() => {
+            const user = await getUser(session?.user?.id || "");
+            setUser(user);
+        }
+        getUserFromDB();
+        
+    }, [session?.user?.id])
 
     function seatSelect(slot:Slot) {
         // const year = today.getFullYear();
@@ -95,6 +109,15 @@ export default function Page() {
         // const day = dateParam?.padStart(2, '0');
         // const date =  `${year}-${month}-${day}`;
 
+        if(!user) return;
+        if(user.role === 'vendor'){
+            alert("You are not allowed to book tickets as a vendor");
+            return;
+        }
+        if(user.google_id === 'suspended'){
+            alert("Your account has been suspended. Please contact support for more information.");
+            return;
+        }
         useEventStore.getState().setSlot(slot);
         router.push("/booking/seatSelection?movieId=" + movieId);
     }
@@ -174,21 +197,26 @@ export default function Page() {
             <div className="mt-10 flex flex-col space-y-5">
                 {load ? <Spinner/> :
                     <>
-                        {theatres.map((theatre:any, index:number) => (
-                            <div key={index} className="bg-blue-100 p-3 font-medium text-lg flex rounded-lg items-center space-x-60 xl:space-x-120 ">
-                                <div className="text-2xl font-extrabold">{theatre.location.toUpperCase()}</div>
-                                <div className="flex text-nowrap gap-6">
-                                    {theatre.slots.map((slot, idx:number) => (
-                                        <button onClick={()=> seatSelect(slot)} key={idx}  className="relative cursor-pointer border-2 border-blue-700 text-center rounded-xl px-6 pt-5 pb-2">
-                                            <div className="absolute shadow -top-2 left-1/2 -translate-x-1/2 px-2 rounded-lg bg-white font-extrabold text-xs tracking-wide">
-                                                {slot.language}
-                                            </div>
-                                            <div className="self-center">{slot.time}</div>
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                        ))}
+                        {theatres.length === 0 ? <div className="text-center">No theatres available</div>
+                        :
+                            <>
+                                {theatres.map((theatre:any, index:number) => (
+                                    <div key={index} className="bg-blue-100 p-3 font-medium text-lg flex rounded-lg items-center space-x-60 xl:space-x-120 ">
+                                        <div className="text-2xl font-extrabold">{theatre.location.toUpperCase()}</div>
+                                        <div className="flex text-nowrap gap-6">
+                                            {theatre.slots.map((slot, idx:number) => (
+                                                <button onClick={()=> seatSelect(slot)} key={idx}  className="relative cursor-pointer border-2 border-blue-700 text-center rounded-xl px-6 pt-5 pb-2">
+                                                    <div className="absolute shadow -top-2 left-1/2 -translate-x-1/2 px-2 rounded-lg bg-white font-extrabold text-xs tracking-wide">
+                                                        {slot.language}
+                                                    </div>
+                                                    <div className="self-center">{slot.time}</div>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))}
+                            </>
+                        }
                     </>
                 }
             </div>

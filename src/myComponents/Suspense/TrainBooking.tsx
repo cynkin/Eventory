@@ -137,6 +137,8 @@ export default function TrainBookingPage() {
     const [balance, setBalance] = useState<number>(0);
     const [loading, setLoading] = useState<boolean>(false);
 
+    const [user, setUser] = useState<any>();
+
     const {data: session, status} = useSession();
     const router = useRouter();
 
@@ -154,7 +156,7 @@ export default function TrainBookingPage() {
         async function getBalance() {
             const user = await getUser(session?.user?.id || "");
             setBalance(user?.balance || 0);
-
+            setUser(user);
             // await update({
             //     user:{
             //         balance: user?.balance || 0,
@@ -166,6 +168,9 @@ export default function TrainBookingPage() {
 
     const handleSubmit = async () => {
         if(!session || !session.user || !session.user.id) return;
+        if(user?.role === 'vendor') return alert('You are not authorized to book a ticket.')
+
+        if(user?.google_id === 'suspended') return alert('Your account has been suspended. Please contact us for more details.')
 
         setLoading(true);
 

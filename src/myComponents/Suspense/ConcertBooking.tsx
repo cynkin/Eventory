@@ -1,8 +1,9 @@
 'use client'
 import {useSearchParams} from "next/navigation";
 import {useEffect, useState} from "react";
-import {getConcert, getConcertShows} from "@/utils/getFromDb";
+import {getConcert, getConcertShows, getUser} from "@/utils/getFromDb";
 import {Dot} from "lucide-react";
+import {useSession} from "next-auth/react";
 
 import {Metamorphous} from "next/font/google";
 import Link from "next/link";
@@ -23,10 +24,12 @@ function formatDate(dateStr: string){
 }
 
 export default function Page() {
+    const { data: session, status, update } = useSession();
     const searchParams = useSearchParams();
     const concertId = searchParams.get('concertId');
     const [concert, setConcert] = useState<any>();
     const [shows, setShows] = useState<any[]>([])
+    const [user, setUser] = useState<any>();
 
     useEffect(() => {
         if(!concertId) return;
@@ -42,6 +45,21 @@ export default function Page() {
         fetchConcert();
 
     }, [concertId]);
+
+    useEffect(() =>{
+        if(!session?.user?.id) return;
+        const getUserFromDB = async() => {
+            const user = await getUser(session?.user?.id || "");
+            setUser(user);
+        }
+        getUserFromDB();
+
+    }, [session?.user?.id])
+
+    const handleClick = () => {
+        if(user.role === 'vendor') return () => alert("You are not allowed to book a show as a vendor.");
+        return () => alert("Your account has been suspended. Please contact support for more details.");
+    }
 
     return(
         <div className="xl:px-44 pl-7 pr-4 py-10">
@@ -68,12 +86,19 @@ export default function Page() {
                 {shows && shows.map((show, index) => (
                     <div key={index} className="bg-blue-100 p-3 py-5 font-medium text-lg flex justify-between rounded-lg items-center my-5">
                         <div className="text-2xl font-extrabold">{show.location.toUpperCase()}</div>
-                        <div className="flex text-lg font-bold text-nowrap text-gray-700 gap-6"><div className="p-2 border-2 border-blue-800 text-center rounded-xl ">{show.time}</div>
+                        <div className="flex items-center text-lg font-bold text-nowrap text-gray-700 gap-6">
+                            <div className="p-2 border-2 border-blue-800 text-center rounded-xl ">{show.time}</div>
                             <div className="p-2 border-2 border-blue-800 text-center rounded-xl">{formatDate(show.date)}</div>
 
                             <div className="p-2 border-2 border-blue-800 text-center rounded-xl">{show.seats} seats left</div>
 
-                            <Link href={`/concert-booking/payment?showId=${show.id}&concertId=${concertId}`} className="p-2 border-2 hover:bg-blue-200 transition-all duration-200 hover:text-black border-red-600 text-gray-700 text-center rounded-xl">Book Now</Link>
+                            <div className="cursor-pointer">
+                                {user && user.role === 'user' && user.google_id !== 'suspended' ?
+                                    <Link href={`/concert-booking/payment?showId=${show.id}&concertId=${concertId}`} className="p-2 border-2 hover:bg-blue-200 transition-all duration-200 hover:text-black border-red-600 text-gray-700 text-center rounded-xl">Book Now</Link>
+                                    :
+                                    <div onClick={handleClick()} className="p-2 border-2 hover:bg-blue-200 transition-all duration-200 hover:text-black border-red-600 text-gray-700 text-center rounded-xl">Book Now</div>
+                                }
+                            </div>
                         </div>
                     </div>
                 ))}
