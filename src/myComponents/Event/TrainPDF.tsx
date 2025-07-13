@@ -2,6 +2,18 @@ import {Document, Image, Page, StyleSheet, Text, View,} from '@react-pdf/rendere
 import { getBase64 } from '@/utils/getBase64';
 const logoBase64 = getBase64('src/images/logo.png');
 
+function to12Hour(time24: string): string {
+    const [hours, minutes] = time24.split(":");
+    const date = new Date();
+    date.setHours(Number(hours), Number(minutes));
+
+    return date.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+    });
+}
+
 const styles = StyleSheet.create({
     page: {
         padding: 30,
@@ -166,10 +178,10 @@ const TrainPDF = ({ ticket, qrCodeBase64, bookedSeats }: Props) => (
                     <View style={styles.infoRow}>
                         <Text style={styles.label}>Travel Info</Text>
                         <Text style={styles.infoDetails}>From : {ticket.from.location}</Text>
-                        <Text style={[{marginLeft:20, marginBottom: 2, color: '#374151',}]}>{ticket.from.time}</Text>
+                        <Text style={[{marginLeft:20, marginBottom: 2, color: '#374151',}]}>{to12Hour(ticket.from.time)}</Text>
                         <Text style={[{marginLeft:20, marginBottom:12, color: '#374151',}]}>{formatDate(ticket.from.date)}</Text>
                         <Text style={styles.infoDetails}>To : {ticket.to.location}</Text>
-                        <Text style={[{marginLeft:20, marginBottom: 2, color: '#374151',}]}>{ticket.to.time}</Text>
+                        <Text style={[{marginLeft:20,  marginBottom: 2, color: '#374151',}]}>{to12Hour(ticket.to.time)}</Text>
                         <Text style={[{marginLeft:20, color: '#374151',}]}>{formatDate(ticket.to.date)}</Text>
                     </View>
 

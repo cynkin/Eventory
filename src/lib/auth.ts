@@ -46,7 +46,7 @@ export const authOptions = {
                         email: newUser.email,
                         role: newUser.role,
                         balance: newUser.balance ? Number(newUser.balance) : 0,
-                        google: google,
+                        isGoogle: google,
                     };
                 }
                 return{
@@ -55,7 +55,7 @@ export const authOptions = {
                     email: user.email,
                     role: user.role,
                     balance: user.balance ? Number(user.balance) : 0,
-                    google: google,
+                    isGoogle: google,
                 };
             },
         }),
@@ -149,6 +149,7 @@ export const authOptions = {
                 token.role = user.role ?? "user";
                 token.email = user.email!;
                 token.name = user.name ?? undefined;
+                token.isGoogle = user.isGoogle ?? false;
             }
 
             if(trigger === "update" && session){
@@ -171,6 +172,7 @@ export const authOptions = {
                 session.user.balance = token.balance;
                 session.user.email = token.email;
                 session.user.isNew = token.isNewUser || false;
+                session.user.isGoogle = token.isGoogle || false;
             }
             return session;
         },

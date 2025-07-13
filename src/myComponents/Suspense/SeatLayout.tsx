@@ -3,6 +3,7 @@ import React, {useState} from "react"
 import {Seat, SeatLayout} from "../../../types/eventStore"
 import {useEventStore} from "@/stores/eventStore";
 import {notFound, useRouter, useSearchParams} from "next/navigation";
+import {checkLocation} from "@/utils/getFromDb";
 
 const style = "w-full focus:outline-none focus:ring-[1.7px] focus:ring-gray-900 focus:placeholder:text-gray-700 border py-2 px-3 mt-1 mb-3 rounded-lg"
 const seatTypes = ["regular", "vip", "disabled"] as const;
@@ -21,8 +22,10 @@ export default  function GridLayout(){
     const [cols, setCols] = useState(undefined as number | undefined);
     const [location, setLocation] = useState("");
     const [seatLayout, setSeatLayout] = useState<SeatLayout | null>(null);
+    const[error, setError] = useState("");
 
-    const generateLayout = () => {
+    const generateLayout = async() => {
+        if(!await locationCheck(location)) return;
         if (rows && cols && rows > 0 && cols > 0) {
             const newLayout: SeatLayout = {
                 layout: Array.from({ length: rows }, (_, rowIndex) =>
@@ -67,7 +70,6 @@ export default  function GridLayout(){
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
         });
-        console.log(data.cost, typeof data.cost);
 
         const result = await res.json();
         console.log(result);
@@ -79,13 +81,27 @@ export default  function GridLayout(){
         return result;
     };
 
+    const locationCheck = async(location: string) => {
+        if(event === "theatres"){
+            if(location.length < 3){
+                setError("Location must be at least 3 characters long!");
+                return false;
+            }
+            if(await checkLocation(location)){
+                setError("Theatre already exists!");
+                return false;
+            }
+        }
+    }
+
     const handleSave= async() =>{
+        if(!locationCheck(location)) return;
         if(seatLayout){
             setLayout(seatLayout)
-            console.log(seatLayout, "********************");
-            console.log(useEventStore.getState().seatLayout);
-            console.log(event);
-            console.log(trainData);
+            // console.log(seatLayout, "********************");
+            // console.log(useEventStore.getState().seatLayout);
+            // console.log(event);
+            // console.log(trainData);
 
             try {
                 if (event === "trains") {
@@ -116,7 +132,7 @@ export default  function GridLayout(){
                     {event === "theatres" &&
                         <>
                             <label className="block font-medium">Theatre Name, City</label>
-                            <input type={"text"} value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Lido Mall, Bengaluru" className={style} />
+                            <input type={"text"} value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Ex: 'Lido Mall, Bengaluru'" className={style} />
                         </>
                     }
                     <div className="flex ">
@@ -154,6 +170,7 @@ export default  function GridLayout(){
                         </div>
 
                     </div>
+                    <div className="text-red-500 text-sm">{error}</div>
                     <button
                         onClick={generateLayout}
                         className="mt-2 w-full bg-[#1568e3] text-white px-4 py-2 rounded-full hover:bg-[#0d4eaf]"

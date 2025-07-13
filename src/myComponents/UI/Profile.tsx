@@ -5,6 +5,7 @@ import Spinner from "@/myComponents/UI/Spinner";
 import { CircleUserRound, Pencil } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import {getUser} from "@/utils/getFromDb";
+import {useRouter} from "next/navigation";
 
 const style = "hover:cursor-pointer text-[#222] tracking-wide text-nowrap font-bold text-sm ml-2 mr-8 flex items-center hover:text-[#1568e3]";
 
@@ -15,6 +16,7 @@ function capitalize(str: string) {
 }
 
 export default function Profile() {
+    const router = useRouter();
     const { data: session, status } = useSession();
     const [showEventDropdown, setShowEventDropdown] = useState(false);
     const [showProfileDropdown, setShowProfileDropdown] = useState(false);
@@ -43,7 +45,10 @@ export default function Profile() {
         async function getBalance() {
             const user = await getUser(session?.user?.id || "");
             setBalance(user?.balance || 0);
-
+            console.log(user);
+            if(user?.google_id === 'new') {
+                router.push('/login/register?method=google');
+            }
             // await update({
             //     user:{
             //         balance: user?.balance || 0,
@@ -75,7 +80,6 @@ export default function Profile() {
     }, [session]);
 
     if (status === "loading") return <Spinner />;
-
     return (
         <>
             {session ? (

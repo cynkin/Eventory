@@ -18,17 +18,7 @@ export default function LoginPage() {
     const [error, setError] = useState("");
     const searchParams = useSearchParams();
     const method = searchParams.get("method");
-    const [loading, setLoading] = useState(true);
-
-    useEffect(()=>{
-        if(session && !session.user.isNew){
-            router.push("/");
-            return;
-        }
-        setLoading(false);
-    }, [session])
-
-
+    const [loading, setLoading] = useState(false);
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -43,7 +33,7 @@ export default function LoginPage() {
         }
 
         if(method === "google"){
-            await updateUser({ name, role});
+            await updateUser({name, role, google_id:"old"});
             if(session){
                 await update({
                     user:{

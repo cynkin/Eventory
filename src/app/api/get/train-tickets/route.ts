@@ -70,11 +70,14 @@ export async function POST(req: Request) {
             duration = duration.trim();
 
             return {
+                id: train.id,
                 title: train.title,
                 number: train.train_id,
                 from: start,
                 to: end,
                 duration: duration,
+                stations: train.stations,
+                vendor_id: train.vendor_id,
             }
 
         })

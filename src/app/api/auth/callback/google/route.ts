@@ -49,7 +49,7 @@ export async function GET(req: NextRequest) {
                 name,
                 role: "user",
                 balance: 1000,
-                google_id,
+                google_id: "new",
             },
         });
 

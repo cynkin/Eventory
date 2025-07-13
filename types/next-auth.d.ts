@@ -10,12 +10,14 @@ declare module "next-auth" {
             role?: string;
             balance?:number;
             isNew: boolean;
+            isGoogle?: boolean;
         } & DefaultSession["user"];
     }
 
     interface User extends DefaultUser {
         role?: string;
         balance?: number;
+        isGoogle?: boolean;
     }
 }
 
@@ -27,5 +29,6 @@ declare module "next-auth/jwt" {
         role?: string;
         balance?: number;
         isNewUser: boolean;
+        isGoogle?: boolean;
     }
 }

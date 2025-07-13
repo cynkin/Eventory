@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { name, role } = await req.json();
+    const { name, role, google_id } = await req.json();
 
     try {
         const updatedUser = await prisma.users.update({
@@ -18,6 +18,7 @@ export async function POST(req: NextRequest) {
             data: {
                 ...(name && {name}),
                 ...(role && {role}),
+                ...(google_id && {google_id}),
             },
         });
 

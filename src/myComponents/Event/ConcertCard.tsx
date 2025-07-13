@@ -43,9 +43,9 @@ export default function ConcertCard({title, start_date, end_date, image, languag
     return(
         <>
             <Link href={`/concert-booking?concertId=${id}`}
-                  className="hover:cursor-pointer rounded-2xl w-[314px] border border-gray-300 border-b-white flex flex-col">
+                  className="hover:cursor-pointer rounded-2xl border border-gray-300 border-b-white flex flex-col">
                 <div className="rounded-t-2xl w-[314px] h-[180px] relative overflow-hidden">
-                    <img className="scale-110 overflow-hidden transition-all ease-in-out duration-300"
+                    <img className="scale-100 overflow-hidden transition-all ease-in-out duration-300"
                            style={{objectFit: "cover", objectPosition: "center"}}
                            src={image}
                            />

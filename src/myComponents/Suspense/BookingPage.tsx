@@ -77,7 +77,7 @@ export default function Page() {
             const movie = await getMovie(movieId);
             const theatres = await getTheatres(date, movieId);
 
-            console.log(theatres);
+            // console.log(theatres);
 
             setTheatres(theatres);
             setMovie(movie);

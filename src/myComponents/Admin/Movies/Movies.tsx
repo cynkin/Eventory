@@ -14,7 +14,7 @@ function formatDate(dateStr: string){
 export default function Movies() {
     const [movieTickets, setMovieTickets] = useState<any[]>([]);
     const searchParams = useSearchParams();
-    const userId = searchParams.get('id');
+    const movieId = searchParams.get('id');
     const [theatre, setTheatre] = useState<any>({
         theatre: null,
         id: null,
@@ -46,7 +46,7 @@ export default function Movies() {
                         <div className="flex mt-6 flex-row items-center flex-wrap">
                             {movieTickets && movieTickets.length > 0 &&
                                 movieTickets.map((ticket:any, index:number) => (
-                                    <div key={index} className={`border-2 p-2 flex ${ticket.movie.vendor_id === userId && 'bg-pink-50'} flex-col m-2 text-sm rounded-xl w-full border-pink-600 shadow-xs`}>
+                                    <div key={index} className={`border-2 p-2 flex ${ticket.movie.id === movieId && 'bg-pink-50'} flex-col m-2 text-sm rounded-xl w-full border-pink-600 shadow-xs`}>
                                         <div className="flex relative flex-row">
                                             <div className="m-2 w-[411px] h-[167px] ">
                                                 <img alt="" className=" rounded-xl scale-100 h-full w-auto overflow-hidden transition-all ease-in-out duration-300"  style={{ objectFit:"cover", objectPosition: "center"}}
@@ -74,7 +74,7 @@ export default function Movies() {
                                                     <div key={index} onClick={()=>setTheatre({theatre, id:ticket.movie.id})} className="bg-pink-700 hover:bg-pink-100 hover:text-pink-700 transition-all duration-200 cursor-pointer py-2 px-3 text-white rounded-xl  my-2">{theatre.location}</div>
                                                 ))}
                                             </div>
-                                            <Link href={`/?q=users&id=${ticket.movie.vendor_id}`} className="absolute right-1 px-2 m-1 hover:bg-gray-100 hover:text-black transition-all duration-200 bg-black text-white rounded-full">{ticket.movie.vendor_id}</Link>
+                                            <Link href={`/?q=users&id=${ticket.movie.vendor_id}`} className="absolute right-1 px-2 m-1 hover:bg-gray-100 hover:text-black transition-all duration-200 bg-black text-white rounded-full">Vendor ID: {ticket.movie.vendor_id}</Link>
                                         </div>
                                         {theatre.theatre && theatre.id === ticket.movie.id &&
                                             <div className=" mx-6">

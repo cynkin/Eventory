@@ -41,6 +41,11 @@ export async function getTrain(id:string){
     return prisma.trains.findUnique({where:{id}});
 }
 
+export async function checkLocation(location:string){
+    const theatre = await prisma.theatres.findMany({where:{location:{equals:location, mode:'insensitive'}}});
+    return theatre.length > 0;
+}
+
 type MovieTicket = {
     amount : number,
     seats: string[],
@@ -87,7 +92,7 @@ export async function getTheatres(date:string, movie_id:string){
     const theatres = await prisma.theatres.findMany({where:{
         movie_id : movie_id,
     }})
-    console.log("No. of Theatres:", theatres.length);
+    // console.log("No. of Theatres:", theatres.length);
 
     const list = [];
     for(const theatre of theatres){
@@ -96,7 +101,7 @@ export async function getTheatres(date:string, movie_id:string){
                 theatre_id : id,
                 date : date,
             }})
-        console.log("No. of Shows:", tempShows.length, date);
+        // console.log("No. of Shows:", tempShows.length, date);
         const slots = [];
         for(const show of tempShows){
             slots.push({
@@ -124,4 +129,74 @@ export async function getTheatres(date:string, movie_id:string){
     }
 
     return list;
+}
+
+type Concert = {
+    title: string,
+    description: string,
+    ageRating: string,
+    seats: number,
+    genres: string[],
+    languages: string[],
+    cost: number,
+    duration: number,
+    image: string,
+    details: {
+        date: string,
+        time: string,
+        location: string,
+    }[]
+}
+
+export async function addConcerts(){
+    const dataSet = [
+
+    ] as Concert[];
+
+    for (const data of dataSet) {
+        await addConcert(data);
+    }
+}
+
+export async function addConcert(data:Concert){
+
+    const vendor_id = "155a14cd-c945-41bb-844b-942da25eb483"
+    data.details.sort((a,b) => {
+        return new Date(a.date).getTime() - new Date(b.date).getTime();
+    })
+
+    const concert = await prisma.concerts.create({
+        data: {
+            title: data.title.trim(),
+            description: data.description,
+            ageRating: data.ageRating,
+            seats:data.seats,
+            genres: data.genres,
+            languages: data.languages,
+            cost: data.cost,
+            duration:data.duration,
+            image: data.image,
+            start_date: data.details[0].date,
+            end_date: data.details[data.details.length-1].date,
+            vendor: {
+                connect: {id: vendor_id}
+            }
+        }
+    })
+
+    await Promise.all(
+        data.details.map(detail =>
+            prisma.concert_shows.create({
+                data: {
+                    date: detail.date,
+                    time: detail.time,
+                    seats: data.seats,
+                    location: detail.location,
+                    concert: {
+                        connect: { id: concert.id }
+                    }
+                }
+            })
+        )
+    );
 }

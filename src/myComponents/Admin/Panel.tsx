@@ -1,10 +1,9 @@
 import Image from 'next/image'
 import logo from "@/images/logo.png"
 import {
-    BriefcaseBusiness,
     ChartNoAxesColumn,
     Clapperboard,
-    MicVocal,
+    MicVocal, MonitorPlay, Theater,
     TicketPercent,
     Tickets,
     TicketsPlane,
@@ -35,6 +34,13 @@ const sections = [
             { key: "movies", icon: Clapperboard, text: "Movies" },
             { key: "concerts", icon: MicVocal, text: "Concerts" },
             { key: "trains", icon: Train, text: "Trains" }
+        ]
+    },
+    {
+        label: "SHOWS",
+        items: [
+            { key: "movieShows", icon: MonitorPlay, text: "Movies" },
+            { key: "concertShows", icon: Theater, text: "Concerts" },
         ]
     },
     {

@@ -4,11 +4,11 @@ import {useEffect, useState} from "react";
 import {getConcert, getConcertShows} from "@/utils/getFromDb";
 import {Dot} from "lucide-react";
 
-import {New_Rocker} from "next/font/google";
+import {Metamorphous} from "next/font/google";
 import Link from "next/link";
 
 
-const font = New_Rocker({
+const font = Metamorphous({
     subsets:['latin'],
     weight:['400']
 });
@@ -46,8 +46,8 @@ export default function Page() {
     return(
         <div className="xl:px-44 pl-7 pr-4 py-10">
             {concert &&
-                <div className="flex items-center space-x-40 xl:space-x-100">
-                    <img src={concert.image} alt="banner" className="border-2 border-black p-5"/>
+                <div className="flex items-center space-x-40 xl:space-x-50">
+                    <img src={concert.image} alt="banner" className="border-2 w-160 border-black p-5"/>
                     <div className="flex justify-center items-center flex-col">
                         <div className={`${font.className} self-start text-8xl`}>{concert.title.toUpperCase()}</div>
                         <div className="flex items-center self-start flex-row mt-7 space-x-2">

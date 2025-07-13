@@ -14,7 +14,7 @@ export async function POST(req:NextRequest) {
 
     try {
         const data = await req.json();
-        console.log(data, data.details, data.seats);
+        console.log(data);
 
         data.details.sort((a,b) => {
             return new Date(a.date).getTime() - new Date(b.date).getTime();
@@ -40,7 +40,7 @@ export async function POST(req:NextRequest) {
         })
 
         for(const detail of data.details){
-            const show = await prisma.concert_shows.create({
+             await prisma.concert_shows.create({
                 data:{
                     date: detail.date,
                     time: detail.time,

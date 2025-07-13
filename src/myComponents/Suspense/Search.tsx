@@ -8,6 +8,7 @@ import ConcertCard from "@/myComponents/Event/ConcertCard";
 import {useTrainStore} from "@/stores/trainStore";
 import {Station} from "../../../types/eventStore";
 import TrainCard from "@/myComponents/Event/TrainCard";
+import Spinner from "@/myComponents/UI/Spinner";
 
 type Movie = {
     id: string;
@@ -51,11 +52,13 @@ export default function Page() {
     const [filteredConcerts, setFilteredConcerts] = useState<Concert[]>([]);
     const [filteredTrains, setFilteredTrains] = useState<Train[]>([]);
     const [output, setOutput] = useState<boolean>(false);
+    const[loading, setLoading] = useState<boolean>(true);
 
     const trains = useTrainStore(state => state.trains);
     const {refreshTrains} = useTrainStore();
 
     useEffect(() => {
+        setLoading(true);
         const fetchMovies = async () => {
             const data = await getMovies();
 
@@ -116,6 +119,7 @@ export default function Page() {
         fetchTrains();
         fetchConcerts();
         fetchMovies();
+        setLoading(false);
     }, [q, refreshTrains, trains.length]);
 
     // const movie = movies.filter(m => m.title.toLowerCase() === q?.toLowerCase())
@@ -125,17 +129,22 @@ export default function Page() {
 
     return (
         <div>
-            <div className="xl:px-44 p-10 flex flex-wrap gap-6 transition-all duration-1100">
-                {filteredMovies.map((movie, index) => (
-                    <MovieCard key={index} id={movie.id} title={movie.title} image={movie.image} ageRating={movie.ageRating} genres={movie.genres} duration={movie.duration}/>
-                ))}
-                {filteredConcerts.map((concert, index) => (
-                    <ConcertCard key={index} id={concert.id} title={concert.title} image={concert.image} ageRating={concert.ageRating} languages={concert.languages} cost={concert.cost} end_date={concert.end_date} start_date={concert.start_date} genres={concert.genres} duration={concert.duration}/>
-                ))}
-                {filteredTrains.map((train, index) => (
-                    <TrainCard key={index} trainId={train.train_id} id={train.id} title={train.title} stations={train.stations}/>
-                ))}
-            </div>
+            {loading
+            ?
+                <Spinner/>
+            :
+                <div className="xl:px-44 p-10 flex flex-wrap gap-6 transition-all duration-1100">
+                    {filteredMovies.map((movie, index) => (
+                        <MovieCard key={index} id={movie.id} title={movie.title} image={movie.image} ageRating={movie.ageRating} genres={movie.genres} duration={movie.duration}/>
+                    ))}
+                    {filteredConcerts.map((concert, index) => (
+                        <ConcertCard key={index} id={concert.id} title={concert.title} image={concert.image} ageRating={concert.ageRating} languages={concert.languages} cost={concert.cost} end_date={concert.end_date} start_date={concert.start_date} genres={concert.genres} duration={concert.duration}/>
+                    ))}
+                    {filteredTrains.map((train, index) => (
+                        <TrainCard key={index} trainId={train.train_id} id={train.id} title={train.title} stations={train.stations}/>
+                    ))}
+                </div>
+            }
         </div>
     )
 }

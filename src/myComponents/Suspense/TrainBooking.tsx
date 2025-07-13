@@ -214,8 +214,8 @@ export default function TrainBookingPage() {
             console.error("Error sending download-ticket:", e);
         }
 
-        setLoading(false);
         router.push("/account/history")
+        setLoading(false);
     }
 
     function handleClick(location: string) {
@@ -318,7 +318,7 @@ export default function TrainBookingPage() {
                                 </div>
                                 <div className="bg-black p-1 text-white rounded-full flex w-fit flex-row items-center mt-4">
                                     <Info/>
-                                    <div className="flex mx-2 font-medium w-fit flex-col justify-center items-center">Click to choose From and To locations!</div>
+                                    <div className="flex mx-2 font-medium w-fit flex-col justify-center items-center">Click to select/deselect From and To locations!</div>
                                 </div>
                                 <div className="mt-10">
                                     <AddPassengerForm setPassengers={setPassengers}/>

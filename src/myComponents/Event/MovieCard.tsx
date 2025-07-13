@@ -27,7 +27,7 @@ export default function MovieCard({title, image, ageRating, genres, duration, id
     return(
             <>
                 <Link href={`/booking?movieId=${id}`}  className="hover:cursor-pointer rounded-2xl border border-gray-300 border-b-white flex flex-col">
-                    <div className="rounded-2xl w-[311px] h-[167px] relative overflow-hidden">
+                    <div className="rounded-t-2xl w-[311px] h-[167px] relative overflow-hidden">
                         <img alt="" className="scale-100 overflow-hidden transition-all ease-in-out duration-300"  style={{ objectFit:"cover", objectPosition: "center"}}
                                src={image}  />
                     </div>

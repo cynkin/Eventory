@@ -1,4 +1,4 @@
-const updateUser = async(userData: {name?: string, role?:string}) => {
+const updateUser = async(userData: {name?: string, role?:string, google_id?:string}) => {
     try{
         const res = await fetch("/api/user/update", {
             method: "POST",

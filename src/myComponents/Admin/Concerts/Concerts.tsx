@@ -1,5 +1,7 @@
 'use client'
 import {useEffect, useState } from "react";
+import {useSearchParams} from "next/navigation";
+import Link from "next/link";
 
 function formatDate(dateStr: string){
     const date = new Date(dateStr);
@@ -24,6 +26,8 @@ export default function Concerts() {
         show: null,
         id: null,
     })
+    const searchParams = useSearchParams();
+    const concertId = searchParams.get('id');
 
     useEffect(() => {
         const fetchConcertTickets = async () => {
@@ -43,15 +47,15 @@ export default function Concerts() {
 
     return(
         <div className="">
-            <div className="bg-white rounded-2xl ml-10 p-5 mt-10 w-full mb-5 h-screen">
+            <div className="bg-white rounded-2xl ml-10 p-5 mt-10 w-full h-screen overflow-y-auto">
                 <div className="text-gray-500 font-medium px-5 pt-3">Events</div>
                 <div className="text-3xl font-medium ml-6 pb-5">Concerts</div>
                 <div className="flex flex-col">
                     <div className="flex mt-6 flex-row items-center flex-wrap">
                         {concertTickets && concertTickets.length > 0 &&
                         concertTickets.map((ticket:any, index:number) => (
-                            <div key={index} className="border-2 p-2 flex flex-col m-2 text-sm rounded-xl w-full border-purple-600 shadow-xs">
-                                <div className="flex flex-row">
+                            <div key={index} className={`border-2 p-2 flex flex-col ${ticket.concert.id === concertId && 'bg-purple-100'} m-2 text-sm rounded-xl w-full border-purple-600 shadow-xs`}>
+                                <div className="flex relative flex-row">
                                     <div className="m-2 w-[411px] h-[167px]">
                                         <img alt="" className=" rounded-xl scale-100 h-full w-auto overflow-hidden transition-all ease-in-out duration-300"  style={{ objectFit:"cover", objectPosition: "center"}}
                                              src={ticket.concert.image}  />
@@ -75,11 +79,12 @@ export default function Concerts() {
                                         </div>
 
                                     </div>
-                                    <div key={index} className="text-nowrap">
+                                    <div key={index} className="mt-8 text-nowrap">
                                         {ticket.shows.map((show:any, index:number) => (
                                             <div key={index} onClick={() => setConcertShow({show, id: ticket.concert.id})} className="bg-purple-700 hover:bg-purple-900 cursor-pointer py-2 px-3 text-white rounded-xl  my-2">{show.location}</div>
                                         ))}
                                     </div>
+                                    <Link href={`/?q=users&id=${ticket.concert.vendor_id}`} className="absolute right-1 px-2 m-1 hover:bg-gray-100 hover:text-black transition-all duration-200 bg-black text-white rounded-full">Vendor ID: {ticket.concert.vendor_id}</Link>
                                 </div>
                                 {concertShow.show && concertShow.id === ticket.concert.id &&
                                     <div className=" mx-6">
@@ -97,6 +102,7 @@ export default function Concerts() {
                         ))}
                     </div>
                 </div>
+                <div className="flex justify-center mt-10"></div>
             </div>
         </div>
     )

@@ -146,6 +146,7 @@ model concert_tickets {
   id              String        @id @default(uuid())
   amount          Float
   seats           Int
+  status          String?  @default("verified")
   user_id         String        @db.Uuid
   concert_show_id String        @db.Uuid
   concert_show    concert_shows @relation(fields: [concert_show_id], references: [id])
@@ -159,6 +160,7 @@ model train_tickets {
   passengers   Json
   from_station Json
   to_station   Json
+  status        String?  @default("verified")
   user_id      String   @db.Uuid
   train_id     String   @db.Uuid
   train        trains   @relation(fields: [train_id], references: [id])

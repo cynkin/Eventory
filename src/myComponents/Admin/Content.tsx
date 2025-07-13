@@ -1,10 +1,15 @@
 import {useSearchParams} from "next/navigation";
 import Users from "@/myComponents/Admin/Users";
-import Movies from "@/myComponents/Admin/Movies";
-import Concerts from "@/myComponents/Admin/Concerts";
-import Trains from "@/myComponents/Admin/Trains";
-import MovieTickets from "@/myComponents/Admin/MovieTickets";
+import Movies from "@/myComponents/Admin/Movies/Movies";
+import Concerts from "@/myComponents/Admin/Concerts/Concerts";
+import Trains from "@/myComponents/Admin/Trains/Trains";
+import MovieTickets from "@/myComponents/Admin/Movies/MovieTickets";
+import MovieShows from "@/myComponents/Admin/Movies/MovieShows";
+import ConcertShows from "@/myComponents/Admin/Concerts/ConcertShows";
+import ConcertTickets from "@/myComponents/Admin/Concerts/ConcertTickets";
+import TrainTickets from "@/myComponents/Admin/Trains/TrainTickets"
 import {signOut} from "next-auth/react";
+
 
 export default function Content() {
     const searchParams = useSearchParams();
@@ -29,6 +34,10 @@ export default function Content() {
                 {q === 'concerts' && <Concerts/>}
                 {q === 'trains' && <Trains/>}
                 {q === 'movieTickets' && <MovieTickets/>}
+                {q === 'movieShows' && <MovieShows/>}
+                {q === 'concertShows' && <ConcertShows/>}
+                {q === 'concertTickets' &&<ConcertTickets/>}
+                {q === 'trainTickets' && <TrainTickets/>}
             </div>
         </div>
     )

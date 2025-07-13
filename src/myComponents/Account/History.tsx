@@ -306,6 +306,18 @@ export default function History() {
                                         </div>
                                     </div>
                                 </div>
+                                <div className="border rounded-xl border-cyan-600 p-2 mt-2">
+                                    {ticket.stations.map((station:any, index:number) => (
+                                        <div key={index} className="">
+                                            <div className="flex items-center space-x-8">
+                                                <div className="w-3/7">{station.location}</div>
+                                                <div className="w-1/7 font-medium">{to12(station.time)}</div>
+                                                <div className="w-2/7 font-medium">{formatDate(station.date)}</div>
+                                                <div className="w-1/7 font-medium">&#8377; {station.cost}</div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         ))}
                 </div>
@@ -315,7 +327,7 @@ export default function History() {
                         movieTickets.map((ticket:any, index:number) => (
                             <div key={index} className={`border-2 relative ${ticket.status === 'cancelled' && 'bg-red-50'} p-2 m-2 text-sm rounded-xl w-fit border-pink-600 shadow-xs`}>
                                 {ticket.status === 'cancelled' && (
-                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-[-25deg] tracking-widest text-red-600 text-4xl font-bold opacity-50 pointer-events-none select-none">
+                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-[-30deg] tracking-widest text-red-600 text-4xl font-bold opacity-50 pointer-events-none select-none">
                                         CANCELLED
                                     </div>
                                 )}
@@ -324,10 +336,13 @@ export default function History() {
                                 <div>{formatDate(ticket.date)}</div>
                                 <div>{ticket.location}</div>
                                 <div className="mt-1 font-bold">Total : &#8377; {ticket.amount}</div>
-                                {ticket.status !== 'cancelled' && ticket.status !== 'expired' &&
-                                    <div className="flex mt-2 justify-between items-center">
-                                        <button onClick={() => handleDownload(ticket)} className="bg-blue-400 hover:bg-blue-500 cursor-pointer p-1 px-3 text-white rounded-full mr-2">Download Ticket</button>
-                                        <button onClick={() => cancelTicket(ticket)} className="bg-red-400 hover:bg-red-500 cursor-pointer p-1 px-3 text-white rounded-full ">Cancel Ticket</button>
+                                {ticket.status !== 'cancelled' && ticket.status !== 'expired' ?
+                                        <div className="flex mt-2 justify-between items-center">
+                                            <button onClick={() => handleDownload(ticket)} className="bg-blue-400 hover:bg-blue-500 cursor-pointer p-1 px-3 text-white rounded-full mr-2">Download Ticket</button>
+                                            <button onClick={() => cancelTicket(ticket)} className="bg-red-400 hover:bg-red-500 cursor-pointer p-1 px-3 text-white rounded-full ">Cancel Ticket</button>
+                                        </div>
+                                    :
+                                    <div className="h-9">
                                     </div>
                                 }
                             </div>
@@ -336,31 +351,50 @@ export default function History() {
 
                     {concertTickets && concertTickets.length > 0 &&
                         concertTickets.map((ticket:any, index:number) => (
-                            <div key={index} className="border-2 p-2 m-2 text-sm rounded-xl w-fit border-purple-600 shadow-xs">
+                            <div key={index} className={`border-2 relative ${ticket.status === 'cancelled' && 'bg-red-50'} p-2 m-2 text-sm rounded-xl w-fit border-purple-600 shadow-xs`}>
+                                {ticket.status === 'cancelled' && (
+                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-[-30deg] tracking-widest text-red-600 text-4xl font-bold opacity-50 pointer-events-none select-none">
+                                        CANCELLED
+                                    </div>
+                                )}
                                 <div className="font-medium mb-1 text-lg">{ticket.concert.title}</div>
                                 <div>{ticket.time}</div>
                                 <div>{formatDate(ticket.date)}</div>
                                 <div>{ticket.location}</div>
                                 <div className="mt-1 font-bold">Total : &#8377; {ticket.amount}</div>
-                                <div className="flex mt-2 justify-between items-center">
-                                    <button onClick={() => handleDownload(ticket)} className="bg-blue-400 hover:bg-blue-500 cursor-pointer p-1 px-3 text-white rounded-full mr-2">Download Ticket</button>
-                                    <button onClick={() => cancelTicket(ticket)} className="bg-red-400 hover:bg-red-500 cursor-pointer p-1 px-3 text-white rounded-full ">Cancel Ticket</button>
-                                </div>
+                                {ticket.status !== 'cancelled' && ticket.status !== 'expired' ?
+                                    <div className="flex mt-2 justify-between items-center">
+                                        <button onClick={() => handleDownload(ticket)} className="bg-blue-400 hover:bg-blue-500 cursor-pointer p-1 px-3 text-white rounded-full mr-2">Download Ticket</button>
+                                        <button onClick={() => cancelTicket(ticket)} className="bg-red-400 hover:bg-red-500 cursor-pointer p-1 px-3 text-white rounded-full ">Cancel Ticket</button>
+                                    </div>
+                                    :
+                                    <div className="h-9">
+                                    </div>
+                                }
                             </div>
                         ))
                     }
 
                     {trainTickets && trainTickets.length > 0 &&
                         trainTickets.map((ticket:any, index:number) => (
-                            <div key={index} className="border-2 p-2 m-2 text-sm rounded-xl w-fit border-green-600 shadow-xs">
+                            <div key={index} className={`border-2 relative ${ticket.status === 'cancelled' && 'bg-red-50'} p-2 m-2 text-sm rounded-xl w-fit border-green-600 shadow-xs`}>
+                                {ticket.status === 'cancelled' && (
+                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-[-30deg] tracking-widest text-red-600 text-4xl font-bold opacity-50 pointer-events-none select-none">
+                                        CANCELLED
+                                    </div>
+                                )}
                                 <div className="font-medium mb-1 text-lg">{ticket.title}</div>
                                 <div>From: <span className="font-bold">{ticket.from.location}</span></div>
                                 <div>To: <span className="font-bold">{ticket.to.location}</span></div>
                                 <div className="mt-1 font-bold">Total : &#8377; {ticket.amount}</div>
-                                <div className="flex mt-2 justify-between items-center">
-                                    <button onClick={() => handleDownload(ticket)} className="bg-blue-400 hover:bg-blue-500 cursor-pointer p-1 px-3 text-white rounded-full mr-2">Download Ticket</button>
-                                    <button onClick={() => cancelTicket(ticket)} className="bg-red-400 hover:bg-red-500 cursor-pointer p-1 px-3 text-white rounded-full ">Cancel Ticket</button>
-                                </div>
+                                {ticket.status !== 'cancelled' && ticket.status !== 'expired' ?
+                                    <div className="flex mt-2 justify-between items-center">
+                                        <button onClick={() => handleDownload(ticket)} className="bg-blue-400 hover:bg-blue-500 cursor-pointer p-1 px-3 text-white rounded-full mr-2">Download Ticket</button>
+                                        <button onClick={() => cancelTicket(ticket)} className="bg-red-400 hover:bg-red-500 cursor-pointer p-1 px-3 text-white rounded-full ">Cancel Ticket</button>
+                                    </div>
+                                    :
+                                    <div className="h-9"></div>
+                                }
                             </div>
                         ))}
 
