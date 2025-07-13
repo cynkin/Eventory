@@ -8,6 +8,8 @@ export default function Users() {
     const searchParams = useSearchParams();
     const id = searchParams.get('id');
     const [users, setUsers] = useState([]);
+    const [fetching, setFetching] = useState(true);
+
 
     useEffect(() => {
         const fetchUsers = async() =>{
@@ -18,7 +20,8 @@ export default function Users() {
         }
 
         fetchUsers();
-    },[])
+        setFetching(false);
+    },[fetching])
 
     function getWeeks(date:string) {
         const inputDate = new Date(date);
@@ -28,6 +31,9 @@ export default function Users() {
     }
 
     const suspendUser = (id:string, action:string) => async () => {
+        const confirmed = action ==='suspended' ? window.confirm("Are you sure you want to unsuspend this user?") : window.confirm("Are you sure you want to suspend this user?");
+        if (!confirmed) return;
+
         const res = await fetch("/api/user/suspend", {
             method: "POST",
             headers: {
@@ -36,14 +42,32 @@ export default function Users() {
             body: JSON.stringify({user_id: id, action})
         })
 
-        if(action !== 'suspended') alert("User suspended successfully");
-        else alert("User unsuspended successfully");
-        window.location.reload();
+        if(res.ok) {
+            if (action !== 'suspended') alert("User suspended successfully");
+            else alert("User unsuspended successfully");
+            setFetching(true);
+        }
+        else alert("Failed to suspend user");
     }
 
     const deleteUser = (id:string) => async () => {
+        const confirmed = window.confirm("Are you sure you want to delete this user?");
+        if (!confirmed) return;
 
+        const res = await fetch("/api/user/delete", {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ user_id: id })
+        });
 
+        if (res.ok) {
+            alert("User deleted successfully");
+            setFetching(true);
+        } else {
+            alert("Failed to delete user");
+        }
     }
     return (
         <div className="">
@@ -76,7 +100,7 @@ export default function Users() {
                             <Link href={"#"} className="w-4/12 hover:bg-black hover:text-white transition-all duration-300 py-2">{user.id}</Link>
                             <div className="w-2/12 flex px-15 flex-row justify-between transition-all duration-300  truncate">
                                 <Ban onClick={suspendUser(user.id, user.google_id)} className={`cursor-pointer ${user.google_id === 'suspended' ? 'text-red-500 hover:text-green-500' : 'text-green-500 hover:text-red-500' }`}/>
-                                <UserRoundX onClick={deleteUser(user.id)} className="cursor-pointer text-green-500 hover:text-red-500"/>
+                                <div className="cursor-pointer rounded-full p-1 hover:bg-red-500 hover:text-white text-red-500"><UserRoundX onClick={deleteUser(user.id)} className=""/></div>
                             </div>
                         </div>
                     ))}
