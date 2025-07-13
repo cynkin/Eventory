@@ -164,8 +164,8 @@ export default function PaymentPage() {
 
                         <div className="mt-5 flex justify-center w-full rounded-xl">
                             {noOfSeats > 0 &&
-                                <button onClick={handleSubmit} className=" px-4 py-2 cursor-pointer rounded-full bg-[#1568e3] text-white hover:bg-[#0d4eaf]">
-                                    Proceed to Payment
+                                <button onClick={handleSubmit} className=" px-4 py-2 w-full cursor-pointer rounded-full bg-[#1568e3] text-white hover:bg-[#0d4eaf]">
+                                    Pay
                                 </button>
                             }
                         </div>

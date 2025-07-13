@@ -25,7 +25,9 @@ export default  function GridLayout(){
     const[error, setError] = useState("");
 
     const generateLayout = async() => {
+        console.log("Generate Layout")
         if(!await locationCheck(location)) return;
+        console.log("Location Check")
         if (rows && cols && rows > 0 && cols > 0) {
             const newLayout: SeatLayout = {
                 layout: Array.from({ length: rows }, (_, rowIndex) =>
@@ -91,7 +93,9 @@ export default  function GridLayout(){
                 setError("Theatre already exists!");
                 return false;
             }
+            return true;
         }
+        return true;
     }
 
     const handleSave= async() =>{

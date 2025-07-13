@@ -386,6 +386,8 @@ export default function History() {
                                 <div className="font-medium mb-1 text-lg">{ticket.title}</div>
                                 <div>From: <span className="font-bold">{ticket.from.location}</span></div>
                                 <div>To: <span className="font-bold">{ticket.to.location}</span></div>
+                                <div>Boarding Date: <span className="font-bold">{formatDate(ticket.from.date)}</span></div>
+                                <div>Boarding Time: <span className="font-bold">{to12(ticket.from.time)}</span></div>
                                 <div className="mt-1 font-bold">Total : &#8377; {ticket.amount}</div>
                                 {ticket.status !== 'cancelled' && ticket.status !== 'expired' ?
                                     <div className="flex mt-2 justify-between items-center">
