@@ -1,7 +1,7 @@
 import { io } from "socket.io-client";
 
 const socket = io("http://localhost:4000", {
-    autoConnect: false, // we'll control when to connect
+    autoConnect: false,
     withCredentials: true,
     transports: ["websocket"],
 });

@@ -92,7 +92,7 @@ export default function History() {
                 })
             const data = await res.json();
             setMovieTickets(data);
-            console.log(data);
+            // console.log(data);
         };
 
         const fetchConcertTickets = async () => {
@@ -139,6 +139,7 @@ export default function History() {
         })
 
         const blob = await res.blob();
+        // console.log(blob);
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;

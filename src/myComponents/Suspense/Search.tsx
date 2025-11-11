@@ -51,7 +51,6 @@ export default function Page() {
     const [filteredMovies, setFilteredMovies] = useState<Movie[]>([]);
     const [filteredConcerts, setFilteredConcerts] = useState<Concert[]>([]);
     const [filteredTrains, setFilteredTrains] = useState<Train[]>([]);
-    const [output, setOutput] = useState<boolean>(false);
     const[loading, setLoading] = useState<boolean>(true);
 
     const trains = useTrainStore(state => state.trains);
@@ -63,14 +62,13 @@ export default function Page() {
             const data = await getMovies();
 
             if(q.trim() === "") {
-                setOutput((prev) => prev || false)
                 setFilteredMovies(data);
                 return;
             }
 
             const fuse = new Fuse(data, {
                 keys: ['title'],
-                threshold: 0.4, // fuzzy match sensitivity
+                threshold: 0.4, 
             });
 
             const results = fuse.search(q);
@@ -84,16 +82,16 @@ export default function Page() {
 
             if(q.trim() === "") {
                 setFilteredConcerts(data);
-                setOutput((prev) => prev || false)
                 return;
             }
 
             const fuse = new Fuse(data, {
                 keys: ['title'],
-                threshold: 0.4, // fuzzy match sensitivity
+                threshold: 0.4, 
             });
 
             const results = fuse.search(q);
+            // console.log(results);
             setFilteredConcerts(results.map(res => res.item));
 
             // console.log(data, results, q);
@@ -103,13 +101,12 @@ export default function Page() {
             refreshTrains();
             // console.log(trains);
             if(q.trim() === "") {
-                setOutput((prev) => prev || false)
                 return;
             }
 
             const fuse = new Fuse(trains, {
                 keys: ['title'],
-                threshold: 0.4, // fuzzy match sensitivity
+                threshold: 0.4, 
             });
 
             const results = fuse.search(q);

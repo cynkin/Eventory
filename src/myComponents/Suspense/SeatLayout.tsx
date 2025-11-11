@@ -25,9 +25,9 @@ export default  function GridLayout(){
     const[error, setError] = useState("");
 
     const generateLayout = async() => {
-        console.log("Generate Layout")
+        // console.log("Generate Layout")
         if(!await locationCheck(location)) return;
-        console.log("Location Check")
+        // console.log("Location Check")
         if (rows && cols && rows > 0 && cols > 0) {
             const newLayout: SeatLayout = {
                 layout: Array.from({ length: rows }, (_, rowIndex) =>
