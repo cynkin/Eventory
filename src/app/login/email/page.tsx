@@ -2,7 +2,6 @@
 import Image from "next/image"
 import logo from "@/images/logo.png"
 import React, {useState} from "react";
-import {signIn} from 'next-auth/react';
 import {FcGoogle} from "react-icons/fc"
 import {useRouter} from "next/navigation";
 import {useAuthForm} from "@/app/context/AuthFormContext";

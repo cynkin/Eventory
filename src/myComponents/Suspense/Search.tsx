@@ -1,5 +1,5 @@
 'use client'
-import {notFound, useSearchParams} from 'next/navigation';
+import {useSearchParams} from 'next/navigation';
 import MovieCard from "@/myComponents/Event/MovieCard";
 import {useEffect, useState} from "react";
 import {getConcerts, getMovies} from "@/utils/getFromDb";
@@ -42,8 +42,6 @@ type Train = {
     stations : Station[];
 }
 
-const validEvents = ['movies', 'concerts', 'trains'];
-
 export default function Page() {
     const searchParams = useSearchParams();
     const q = searchParams.get('q') || "";
@@ -51,7 +49,6 @@ export default function Page() {
     const [filteredMovies, setFilteredMovies] = useState<Movie[]>([]);
     const [filteredConcerts, setFilteredConcerts] = useState<Concert[]>([]);
     const [filteredTrains, setFilteredTrains] = useState<Train[]>([]);
-    const [output, setOutput] = useState<boolean>(false);
     const[loading, setLoading] = useState<boolean>(true);
 
     const trains = useTrainStore(state => state.trains);
@@ -63,14 +60,13 @@ export default function Page() {
             const data = await getMovies();
 
             if(q.trim() === "") {
-                setOutput((prev) => prev || false)
                 setFilteredMovies(data);
                 return;
             }
 
             const fuse = new Fuse(data, {
                 keys: ['title'],
-                threshold: 0.4, // fuzzy match sensitivity
+                threshold: 0.4, 
             });
 
             const results = fuse.search(q);
@@ -84,16 +80,16 @@ export default function Page() {
 
             if(q.trim() === "") {
                 setFilteredConcerts(data);
-                setOutput((prev) => prev || false)
                 return;
             }
 
             const fuse = new Fuse(data, {
                 keys: ['title'],
-                threshold: 0.4, // fuzzy match sensitivity
+                threshold: 0.4, 
             });
 
             const results = fuse.search(q);
+            // console.log(results);
             setFilteredConcerts(results.map(res => res.item));
 
             // console.log(data, results, q);
@@ -103,17 +99,17 @@ export default function Page() {
             refreshTrains();
             // console.log(trains);
             if(q.trim() === "") {
-                setOutput((prev) => prev || false)
                 return;
             }
 
             const fuse = new Fuse(trains, {
                 keys: ['title'],
-                threshold: 0.4, // fuzzy match sensitivity
+                threshold: 0.4, 
             });
 
             const results = fuse.search(q);
             setFilteredTrains(results.map(res => res.item));
+            console.log("yoyoXXXXXXXXyo", results);
         }
 
         fetchTrains();
@@ -141,7 +137,7 @@ export default function Page() {
                         <ConcertCard key={index} id={concert.id} title={concert.title} image={concert.image} ageRating={concert.ageRating} languages={concert.languages} cost={concert.cost} end_date={concert.end_date} start_date={concert.start_date} genres={concert.genres} duration={concert.duration}/>
                     ))}
                     {filteredTrains.map((train, index) => (
-                        <TrainCard key={index} trainId={train.train_id} id={train.id} title={train.title} stations={train.stations}/>
+                        <TrainCard key={index} trainId={train.train_id} id={train.id} title={train.title} from={train.stations[0]} to={train.stations[train.stations.length - 1]} stations={train.stations}/>
                     ))}
                 </div>
             }

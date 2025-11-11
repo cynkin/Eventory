@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 import 'dotenv/config';
 const io = new Server(4000, {
     cors: {
-        origin: ["http://localhost:3000"],
+        origin: ["https://eventory-1gfmp43sx-lohith-vs-projects.vercel.app"],
         methods: ["GET", "POST"]
     }
 });

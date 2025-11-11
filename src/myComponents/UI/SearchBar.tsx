@@ -1,11 +1,19 @@
-import Form from "next/form"
 // import Search from "@/images/search.png"
 import {Search} from "lucide-react"
+import {useRouter} from "next/navigation";
 
 export default function SearchBar() {
+    const router = useRouter();
+    const handleSubmit = (e: any) => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+        const q = formData.get("q") as string;
+        router.push(`/search?q=${q}`);
+    }
+
     return (
         <div className="w-full">
-            <Form action={"/search"} className="flex items-center">
+            <form onSubmit={handleSubmit} className="flex items-center">
                 <div className="relative w-full">
                     <input type="text"
                            name="q"
@@ -20,7 +28,7 @@ export default function SearchBar() {
                  transition-all duration-200 hover:bg-[#0d4eaf]">
                     Search
                 </button>
-            </Form>
+            </form>
 
         </div>
     )
